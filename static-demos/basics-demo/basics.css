@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Lato');
+@import url("https://fonts.googleapis.com/css?family=Lato");
 
 /*
 
@@ -39,7 +39,7 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-image: url(/demo/muted-microphone.svg);
+  background-image: url(/static-demos/shared-assets/muted-microphone.svg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: 20%;
@@ -61,8 +61,9 @@ grid geometry and video positioning when there is no screen share
   display: grid;
   position: relative;
   grid-template-rows: [top] 75% [mid] 25% [bottom];
-  grid-template-columns: [left] 25% [local-right] 8.33% [one-third] 
-                         16.67% [one-half] 16.67% [two-thirds] 1fr [right];
+  grid-template-columns:
+    [left] 25% [local-right] 8.33% [one-third]
+    16.67% [one-half] 16.67% [two-thirds] 1fr [right];
 }
 
 .daily-video-div.remote.cam {
@@ -103,7 +104,6 @@ grid geometry and video positioning when there is no screen share
   object-position: right bottom;
 }
 
-
 /*
 
 grid geometry and video positioning when there is a single remote
@@ -129,12 +129,12 @@ screen share. this demo layout doesn't support dual screen shares.
   object-position: right bottom;
 }
 
-.remote-screens-1>.remote.cam {
+.remote-screens-1 > .remote.cam {
   grid-area: mid / 4 / bottom / 5;
 }
-.remote-screens-1>.remote.cam ~ .remote.cam {
+.remote-screens-1 > .remote.cam ~ .remote.cam {
   grid-area: mid / 3 / bottom / 4;
 }
-.remote-screens-1>.remote.cam ~ .remote.cam ~ .remote.cam{
+.remote-screens-1 > .remote.cam ~ .remote.cam ~ .remote.cam {
   grid-area: mid / 2 / bottom / 3;
 }

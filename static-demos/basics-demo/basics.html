@@ -3,15 +3,12 @@
 <title>call methods and events demo</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://unpkg.com/@daily-co/daily-js"></script>
-<script src="create-demo-room.js"></script>
+<script src="../shared-assets/create-demo-room.js"></script>
 <style>
-/*
-   css for this demo page (not for the internal video call layout
-   inside the iframe 
-*/
 button {
   display: block;
 }
+
 #page-blocks {
   height: 100%;
   display: flex;
@@ -44,7 +41,6 @@ button {
   position: relative;
   height: 100%;
   min-height: 300px;
-  border: 1px dashed black;
 }
 
 .info>div {
@@ -81,17 +77,9 @@ function setup() {
   // just a little ui setup
   //
   buttonDisable('join-meeting', 'leave-meeting',
-                'start-recording', 'stop-recording',
-                'bandwidth-buttons');
-
-  // setup bandwidth radio button action
-  document.getElementsByName('kbs').forEach((r) => {
-    r.addEventListener('click', (e) => {
-      let kbs = parseInt(e.target.value);
-      console.log('setting bandwidth to', kbs);
-      callFrame.sendAppMessage({ setVideoBandwidthCap: kbs });
-    });
-  });
+                'toggle-local-cam', 'toggle-local-mic',
+                'start-recording', 'stop-recording', 'start-screenshare',
+                'stop-screenshare');
 }
 
 async function createRoom() {
@@ -108,9 +96,7 @@ async function createRoom() {
   ownerLink = await createMtgLinkWithToken(
     room, { 
       is_owner: true,
-      enable_recording: 'local',
-      start_audio_off: true,
-      start_video_off: true,
+      enable_recording: 'local'
   });
 
   updateRoomInfoDisplay();
@@ -122,22 +108,13 @@ async function createFrame() {
   // ask the daily-js library to create an iframe inside the
   // 'call-frame-container' div
   //
+  let customLayout = !!document
+                         .querySelector('input[name="customLayout"]:checked')
+                         .value,
+      cssFile = customLayout ? 'basics.css' : null;
   callFrame = window.DailyIframe.createFrame(
-    document.getElementById('call-frame-container'), {
-      customLayout: true,
-      // css for the video call layout. super-simple -- just display
-      // single remote video full-width and full-height
-      cssText: `
-        .daily-video-div {
-          visibility: visible;
-          width: 100%;
-          height: 100%;
-         }
-         .daily-video-div.local {
-           display: none;
-         }
-      `
-    }
+    document.getElementById('call-frame-container'),
+    { customLayout, cssFile }
   );
 
   callFrame.on('loading', (e) => {
@@ -146,6 +123,8 @@ async function createFrame() {
   });
 
   callFrame.on('loaded', showEvent)
+           .on('started-camera', showEvent)
+           .on('camera-error', showEvent)
            .on('joining-meeting', showEvent)
            .on('recording-stats', showEvent)
            .on('recording-error', showEvent)
@@ -155,12 +134,15 @@ async function createFrame() {
 
   callFrame.on('joined-meeting', (e) => {
     showEvent(e);
-    buttonEnable('leave-meeting', 'start-recording', 'bandwidth-buttons');
+    buttonEnable('leave-meeting', 'toggle-local-cam', 'toggle-local-mic',
+                 'start-recording', 'start-screenshare');
   });
   callFrame.on('left-meeting', (e) => {
     showEvent(e);
-    buttonDisable('leave-meeting', 'start-recording', 'stop-recording',
-                  'bandwidth-buttons');
+    buttonDisable('leave-meeting',
+                  'toggle-local-cam', 'toggle-local-mic',
+                  'start-recording', 'stop-recording',
+                  'start-screenshare', 'stop-screenshare');
     buttonEnable('join-meeting');
   });
 
@@ -175,12 +157,9 @@ async function createFrame() {
     buttonDisable('stop-recording');
   });
 
-  callFrame.on('participant-joined', () => {
-    // reset video radio buttons
-    let buttons = document.getElementsByName('kbs');
-        highest = buttons[buttons.length-1];
-    highest.checked = true;
-  });
+  callFrame.on('participant-joined', updateParticipantInfoDisplay)
+           .on('participant-updated', updateParticipantInfoDisplay)
+           .on('participant-left', updateParticipantInfoDisplay);
 }
 
 async function createFrameAndRoom() {
@@ -191,23 +170,17 @@ async function createFrameAndRoom() {
 }
 
 function updateRoomInfoDisplay() {
-  let roomLink = document.location.href.replace('-human', '-device') +
-                   '?url=' + encodeURIComponent(room.url);
-  
-      
   let roomInfo = document.getElementById('meeting-room-info');
   roomInfo.innerHTML = `
     <div><b>room info</b></div>
     <div>
-      <div><a href="${roomLink}" target="_blank">
-        device page link
+      send to invite or click to join
+      <div><a href="${room.url}" target="_blank">
+        ${room.url.replace('.co/', '.co/&#8203;')}
       </a></div>
       <div id='expires-countdown'></div>
-      <div> displaying one device camera below
-            (after device joins) </div>
     </div>
   `;
-   // update room expiration time every second
    if (!window.expiresUpdate) {
      window.expiresUpdate = setInterval(() => {
        let exp = (room && room.config && room.config.exp);
@@ -220,6 +193,37 @@ function updateRoomInfoDisplay() {
        }
      }, 1000);
    }
+}
+
+function updateParticipantInfoDisplay(e) {
+  showEvent(e);
+  let infoEl = document.getElementById('meeting-participants-info'),
+      participants = callFrame.participants(),
+      infoHTML = '';
+  // look and make an info block for each participant
+  for (var id in participants) {
+    let p = participants[id];
+    infoHTML += `
+      <div>
+        <div>${p.user_name || 'guest'}</div>
+        <div>cam ${p.video ? 'on' : 'off'}</div>
+        <div>mic ${p.audio ? 'on' : 'off'}</div>
+      </div>
+    `;
+  }
+  infoEl.innerHTML = '<div><b>meeting participants</b></div>' + 
+                     '<div>' + infoHTML + '</div>';
+
+  // update local screenshare button state
+  if (participants.local) {
+    if (participants.local.screen) {
+      buttonDisable('start-screenshare');
+      buttonEnable('stop-screenshare');
+    } else {
+      buttonDisable('stop-screenshare');
+      buttonEnable('start-screenshare');
+    }
+  }
 }
 
 async function updateNetworkInfoDisplay() {
@@ -242,6 +246,14 @@ async function updateNetworkInfoDisplay() {
         ${Math.floor(statsInfo.stats.worstVideoRecvPacketLoss*100)}%</div>
     </div>
   `;
+}
+
+function toggleCam() {
+  callFrame.setLocalVideo(!callFrame.participants().local.video);
+}
+
+function toggleMic() {
+  callFrame.setLocalAudio(!callFrame.participants().local.audio);
 }
 
 //
@@ -268,11 +280,24 @@ function buttonDisable(...args) {
 <div id="page-blocks">
   <div id="create-a-room">
     <button onclick="createFrameAndRoom()">create a room</button>
+    <div>
+      <input type="radio" name="customLayout" value="" checked>
+        standard Daily.co UI
+      </input>
+    </div>
+    <div>
+      <input type="radio" name="customLayout" value="true">
+        demo custom UI
+      </input>
+    </div>
   </div>
   
   <div id="meeting-info-row">
     <div id="meeting-room-info" class="info">
       room info
+    </div>
+    <div id="meeting-participants-info" class="info">
+      meeting participants
     </div>
     <div id="network-info" class="info">
       network stats
@@ -289,6 +314,14 @@ function buttonDisable(...args) {
       </button>
     </div>
     <div>
+      <button id="toggle-local-cam" onclick="toggleCam()">
+        toggle local cam
+      </button>
+      <button id="toggle-local-mic" onclick="toggleMic()">
+        toggle local mic
+      </button>
+    </div>
+    <div>
       <button id="start-recording"
               onclick="buttonDisable('start-recording');
                        callFrame.startRecording()">
@@ -298,13 +331,13 @@ function buttonDisable(...args) {
         stop recording
       </button>
     </div>
-    <div id="bandwidth-buttons">
-      bandwidth: <br />
-      <input type="radio" name="kbs" value="32">32 kb/s</input>
-      <input type="radio" name="kbs" value="128">128 kb/s</input>
-      <input type="radio" name="kbs" value="384">384 kb/s</input>
-      <input type="radio" name="kbs" value="384">512 kb/s</input>
-      <input type="radio" name="kbs" value="800" checked>800 kb/s</input>
+    <div>
+      <button id="start-screenshare" onclick="callFrame.startScreenShare()">
+        start screenshare
+      </button>
+      <button id="stop-screenshare" onclick="callFrame.stopScreenShare()">
+        stop screenshare
+      </button>
     </div>
   </div>
   
