@@ -1,0 +1,32 @@
+{
+  "name": "daily-demos",
+  "version": "0.1.0",
+  "description": "Demo projects showcasing usage of daily-js",
+  "scripts": {
+    "start": "concurrently npm:index-start npm:static-demos-start",
+    "dev": "concurrently npm:index-dev npm:static-demos-dev",
+    "postinstall": "npm run static-demos-install",
+    "index-start": "node index.js",
+    "index-dev": "nodemon index.js",
+    "static-demos-start": "cd static-demos && npm run start",
+    "static-demos-dev": "cd static-demos && npm run dev",
+    "static-demos-install": "cd static-demos && npm i"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daily-co/daily-demos.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daily-co/daily-demos/issues"
+  },
+  "homepage": "https://github.com/daily-co/daily-demos#readme",
+  "dependencies": {
+    "concurrently": "^5.1.0",
+    "express": "^4.17.1",
+    "http-proxy-middleware": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
+}
