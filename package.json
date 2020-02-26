@@ -2,7 +2,9 @@
   "name": "daily-demos",
   "version": "0.1.0",
   "description": "Demo projects showcasing usage of daily-js",
-  "scripts": {},
+  "scripts": {
+    "dev": "node index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/daily-co/daily-demos.git"
