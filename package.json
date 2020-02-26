@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "Demo projects showcasing usage of daily-js",
   "scripts": {
-    "dev": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,7 @@
     "express": "^4.17.1",
     "http-proxy-middleware": "^1.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
 }
