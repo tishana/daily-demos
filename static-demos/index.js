@@ -9,7 +9,8 @@ module.exports = async (req, res) => {
       "index.js",
       "package.json",
       "package-lock.json",
-      "doc-site-assets"
+      "doc-site-assets",
+      "node_modules"
     ]
   });
 };
