@@ -11,5 +11,8 @@
   "bugs": {
     "url": "https://github.com/daily-co/daily-demos/issues"
   },
-  "homepage": "https://github.com/daily-co/daily-demos#readme"
+  "homepage": "https://github.com/daily-co/daily-demos#readme",
+  "dependencies": {
+    "serve": "^11.3.0"
+  }
 }
