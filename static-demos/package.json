@@ -1,7 +1,7 @@
 {
   "main": "index.js",
   "scripts": {
-    "dev": "micro-dev"
+    "dev": "micro-dev -p 3001"
   },
   "devDependencies": {
     "micro": "^9.3.4",
