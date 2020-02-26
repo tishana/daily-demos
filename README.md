@@ -50,7 +50,7 @@ npm init
 # Etc, etc. Make a site.
 ```
 
-3. When it's ready, hook your demo project up to the overall demo project site by: a) exposing your demo through the top-level index via proxying and b) making it run as part of the top-level `npm run dev` and `npm run start` scripts.
+3. When it's ready, hook your demo project up to the overall demo project site by: a) exposing your demo through the root-level index via proxying and b) making it run as part of the root-level npm scripts (`npm run dev`, `npm run start`, `npm install`, etc.).
 
 `index.js`:
 
@@ -67,9 +67,11 @@ app.use(
 
 ```json
 "scripts": {
-    "start": "concurrently npm:index-start npm:my-new-demo-start",
-    "dev": "concurrently npm:index-dev npm:my-new-demo-dev",
+    "start": "concurrently npm:index-start npm:other-demo-start npm:my-new-demo-start",
+    "dev": "concurrently npm:index-dev npm:other-demo-dev npm:my-new-demo-dev",
+    "postinstall": "npm other-demo-install && npm my-new-demo-install",
     "my-new-demo-start": "cd my-new-demo && npm run start",
-    "my-new-demo-dev": "cd my-new-demo && npm run dev"
+    "my-new-demo-dev": "cd my-new-demo && npm run dev",
+    "my-new-demo-install": "cd my-new-demo && npm i"
   },
 ```

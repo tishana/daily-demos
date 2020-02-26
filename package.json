@@ -5,10 +5,12 @@
   "scripts": {
     "start": "concurrently npm:index-start npm:static-demos-start",
     "dev": "concurrently npm:index-dev npm:static-demos-dev",
+    "postinstall": "npm run static-demos-install",
     "index-start": "node index.js",
     "index-dev": "nodemon index.js",
     "static-demos-start": "cd static-demos && npm run start",
-    "static-demos-dev": "cd static-demos && npm run dev"
+    "static-demos-dev": "cd static-demos && npm run dev",
+    "static-demos-install": "cd static-demos && npm i"
   },
   "repository": {
     "type": "git",
