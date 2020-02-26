@@ -13,6 +13,10 @@
   },
   "homepage": "https://github.com/daily-co/daily-demos#readme",
   "dependencies": {
+    "micro": "^9.3.4",
     "serve": "^11.3.0"
+  },
+  "devDependencies": {
+    "micro-dev": "^3.0.0"
   }
 }
