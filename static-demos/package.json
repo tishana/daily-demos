@@ -5,8 +5,10 @@
     "dev": "micro-dev -p 3001"
   },
   "devDependencies": {
+    "micro-dev": "^3.0.0"
+  },
+  "dependencies": {
     "micro": "^9.3.4",
-    "micro-dev": "^3.0.0",
-    "serve-handler": "^6.0.0"
+    "serve-handler": "^6.1.2"
   }
 }
