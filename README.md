@@ -22,6 +22,8 @@ npm i
 npm run start # or `npm run dev`, to automatically restart server on file changes
 ```
 
+Then open your browser and go to `localhost:<port>`, using the `port` printed in the terminal after running the above.
+
 ### Running the entire demo project site
 
 ```bash
@@ -30,6 +32,8 @@ nvm i
 npm i
 npm run start # or `npm run dev`, to automatically restart server on file changes
 ```
+
+Then open your browser and go to [localhost:3000](http://localhost:3000/).
 
 ## Contributing a new demo project
 
