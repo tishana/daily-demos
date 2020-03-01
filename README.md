@@ -54,7 +54,7 @@ npm init
 # Etc, etc. Make a site.
 ```
 
-3. When it's ready, hook your demo project up to the overall demo project site by: a) exposing your demo through the root-level index via proxying and b) making it run as part of the root-level npm scripts (`npm run dev`, `npm run start`, `npm install`, etc.).
+3. When it's ready, hook your demo project up to the overall demo project site by: a) exposing your demo through the root-level index via proxying, b) making it run as part of the root-level npm scripts (`npm run dev`, `npm run start`, `npm install`, etc.), and c) adding an entry (or multiple entries) to the table of contents in `index.html`.
 
 `index.js`:
 
@@ -78,4 +78,10 @@ app.use(
     "my-new-demo-dev": "cd my-new-demo && npm run dev",
     "my-new-demo-install": "cd my-new-demo && npm i"
   },
+```
+
+`index.html`:
+
+```html
+<li><a href="./my-new-demo/">My New Demo</a></li>
 ```
