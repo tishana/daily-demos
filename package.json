@@ -3,14 +3,18 @@
   "version": "0.1.0",
   "description": "Demo projects showcasing usage of daily-js",
   "scripts": {
-    "start": "concurrently npm:index-start npm:static-demos-start",
-    "dev": "concurrently npm:index-dev npm:static-demos-dev",
-    "postinstall": "npm run static-demos-install",
+    "start": "concurrently npm:index-start npm:static-demos-start npm:react-demo-start",
+    "dev": "concurrently npm:index-dev npm:static-demos-dev npm:react-demo-dev",
+    "postinstall": "npm run static-demos-install && npm run react-demo-install",
     "index-start": "node index.js",
     "index-dev": "nodemon index.js",
     "static-demos-start": "cd static-demos && npm run start",
     "static-demos-dev": "cd static-demos && npm run dev",
-    "static-demos-install": "cd static-demos && npm i"
+    "static-demos-install": "cd static-demos && npm i",
+    "react-demo-start": "cd react-demo && npm run build && npm run start",
+    "react-demo-dev": "cd react-demo && npm run dev",
+    "react-demo-install": "cd react-demo && npm i"
+
   },
   "repository": {
     "type": "git",

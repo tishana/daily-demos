@@ -8,10 +8,31 @@ app.get("/", (req, res) => {
   res.sendFile("index.html", { root: __dirname, cacheControl: false });
 });
 
+// Static demos - match /static-demos
+
 app.use(
   "/static-demos",
   createProxyMiddleware({
     target: "http://localhost:3001"
+  })
+);
+
+// React demo - match all other routes
+
+app.use(
+  "/react-demo",
+  createProxyMiddleware({
+    target: "http://localhost:3002",
+    pathRewrite: {
+      '^/react-demo/': '/' // remove base path
+    }
+  })
+);
+
+app.use(
+  "/",
+  createProxyMiddleware({
+    target: "http://localhost:3002"
   })
 );
 
