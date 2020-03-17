@@ -26,6 +26,8 @@ function App(props) {
         case "audio":
           updatedParticipant.audioTrack = e.track;
           break;
+        default:
+          break;
       }
 
       // Update participant in overall participants state
@@ -60,6 +62,8 @@ function App(props) {
           );
           updatedParticipant = { ...prevParticipant };
           delete updatedParticipant.audioTrack;
+          break;
+        default:
           break;
       }
       console.log("updatedParticipant", updatedParticipant);
