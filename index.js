@@ -17,20 +17,10 @@ app.use(
   })
 );
 
-// React demo - match all other routes
+// React demo - match /react-demo
 
 app.use(
   "/react-demo",
-  createProxyMiddleware({
-    target: "http://localhost:3002",
-    pathRewrite: {
-      '^/react-demo/': '/' // remove base path
-    }
-  })
-);
-
-app.use(
-  "/",
   createProxyMiddleware({
     target: "http://localhost:3002"
   })
