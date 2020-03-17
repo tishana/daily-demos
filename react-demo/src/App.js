@@ -31,7 +31,6 @@ function App(props) {
       // Update participant in overall participants state
       let updatedParticipants = { ...prevParticipants };
       updatedParticipants[sessionId] = updatedParticipant;
-
       return updatedParticipants;
     });
   }
@@ -41,8 +40,6 @@ function App(props) {
     const trackId = e.track.id;
 
     setParticipants(prevParticipants => {
-      console.log("before", prevParticipants); // TODO: remove
-
       // Remove track from participant state
       let sessionId, prevParticipant, updatedParticipant;
       switch (e.track.kind) {
@@ -74,13 +71,11 @@ function App(props) {
       } else {
         updatedParticipants[sessionId] = updatedParticipant;
       }
-
-      console.log("after", updatedParticipants); // TODO: remove
       return updatedParticipants;
     });
   }
 
-  // Initialize the call object when the roomUrl is set (when the component mounts)
+  // Initialize the call object when the roomUrl is set (e.g. when the component mounts)
   useEffect(() => {
     const callObject = DailyIframe.createCallObject();
     callObject.join({ url: props.roomUrl });
