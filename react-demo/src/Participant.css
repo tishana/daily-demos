@@ -1,0 +1,19 @@
+.video.local {
+  transform: scale(-1, 1);
+}
+
+.video.min {
+  width: 25%;
+  position: absolute;
+  bottom: 0px;
+  margin: 20px;
+  z-index: 1;
+  border-radius: 10px;
+  border: 4px solid lightblue;
+}
+
+.video.max {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
