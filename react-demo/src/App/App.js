@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import "./App.css";
-import Participant from "./Participant";
+import Participant from "../Participant/Participant";
 
 function App(props) {
   // Participants state, mapping sessionIds to objects with these properties:
