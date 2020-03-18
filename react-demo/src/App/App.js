@@ -1,5 +1,6 @@
 import React, { useReducer, useEffect } from "react";
 import Call from "../Call/Call";
+import Startbutton from "../StartButton/StartButton";
 import {
   roomReducer,
   initialRoomState,
@@ -25,14 +26,12 @@ function App() {
     return <Call roomUrl={room.url} />;
   } else {
     return (
-      <button
+      <Startbutton
         disabled={room.isCreating}
         onClick={() => {
           dispatch({ type: CREATE_ROOM_START });
         }}
-      >
-        Create Room
-      </button>
+      />
     );
   }
 }
