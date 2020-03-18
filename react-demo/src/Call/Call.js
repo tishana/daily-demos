@@ -5,6 +5,8 @@ import Participant from "../Participant/Participant";
 import Invite from "../Invite/Invite";
 import {
   initialParticipantsState,
+  ADD_PARTICIPANT,
+  REMOVE_PARTICIPANT,
   ADD_TRACK,
   REMOVE_TRACK,
   participantsReducer
@@ -17,6 +19,14 @@ function Call(props) {
     participantsReducer,
     initialParticipantsState
   );
+
+  function participantJoined(e) {
+    dispatch({ type: ADD_PARTICIPANT, sessionId: e.participant.session_id });
+  }
+
+  function participantLeft(e) {
+    dispatch({ type: REMOVE_PARTICIPANT, sessionId: e.participant.session_id });
+  }
 
   function trackStarted(e) {
     dispatch({
@@ -37,6 +47,8 @@ function Call(props) {
     callObject.join({ url: props.roomUrl });
     callObject.on("track-started", trackStarted);
     callObject.on("track-stopped", trackStopped);
+    callObject.on("participant-joined", participantJoined);
+    callObject.on("participant-left", participantLeft);
   }, [props.roomUrl]);
 
   const participantCount = Object.keys(participantsState).length;
