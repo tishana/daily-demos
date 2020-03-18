@@ -1,17 +1,9 @@
 import React from "react";
 import "./Invite.css";
 
-// Props
-// - roomUrl: String
-function Invite(props) {
+function Invite() {
   return (
-    <>
-      <p className="invite">
-        Copy and share this URL to invite others:
-        <br />
-        {props.roomUrl}
-      </p>
-    </>
+    <p className="invite">Copy and share this page's URL to invite others</p>
   );
 }
 

@@ -46,7 +46,7 @@ function Call(props) {
           />
         );
       })}
-      {participantCount === 1 && <Invite roomUrl={props.roomUrl} />}
+      {participantCount === 1 && <Invite />}
     </>
   );
 }
