@@ -2,90 +2,30 @@ import React, { useEffect, useReducer } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import "./App.css";
 import Participant from "../Participant/Participant";
-
-// ADD_TRACK action structure:
-// - type: String
-// - track: MediaStreamTrack
-// - sessionId: String
-// - isLocal: Boolean
-const ADD_TRACK = "ADD_TRACK";
-
-// REMOVE_TRACK action structure:
-// - type
-// - track
-const REMOVE_TRACK = "REMOVE_TRACK";
-
-function removeProperty(prop, obj) {
-  const { [prop]: _, ...newObj } = obj;
-  return newObj;
-}
-
-// Participant state structure:
-// - audio: MediaStreamTrack
-// - video: MediaStreamTrack
-// - isLocal: Boolean
-function participantReducer(participant, action) {
-  switch (action.type) {
-    case ADD_TRACK:
-      return { ...participant, [action.track.kind]: action.track };
-    case REMOVE_TRACK:
-      return removeProperty(action.track.kind, participant);
-    default:
-      throw new Error();
-  }
-}
-
-// Participants state structure:
-// { [sessionId]: [participant state] }
-function participantsReducer(participants, action) {
-  // Returns [sessionId, participant] pair
-  function findByTrack(track) {
-    return Object.entries(participants).find(([_, p]) => {
-      return p[track.kind] && p[track.kind].id === track.id;
-    });
-  }
-
-  switch (action.type) {
-    case ADD_TRACK: {
-      const participant = participants[action.sessionId] || {
-        isLocal: action.isLocal
-      };
-      return {
-        ...participants,
-        [action.sessionId]: participantReducer(participant, action)
-      };
-    }
-    case REMOVE_TRACK: {
-      const [sessionId, participant] = findByTrack(action.track);
-      const updatedParticipant = participantReducer(participant, action);
-      if (!(updatedParticipant.audio || updatedParticipant.video)) {
-        return removeProperty(sessionId, participants);
-      }
-      return { ...participants, [sessionId]: updatedParticipant };
-    }
-    default:
-      throw new Error();
-  }
-}
+import { ADD_TRACK, REMOVE_TRACK, participantsReducer } from "./participants";
 
 function App(props) {
   const [participants, dispatch] = useReducer(participantsReducer, {});
+
+  function trackStarted(e) {
+    dispatch({
+      type: ADD_TRACK,
+      sessionId: e.participant.session_id,
+      track: e.track,
+      isLocal: e.participant.local
+    });
+  }
+
+  function trackStopped(e) {
+    dispatch({ type: REMOVE_TRACK, track: e.track });
+  }
 
   // Initialize the call object when the roomUrl is set (e.g. when the component mounts)
   useEffect(() => {
     const callObject = DailyIframe.createCallObject();
     callObject.join({ url: props.roomUrl });
-    callObject.on("track-started", e =>
-      dispatch({
-        type: ADD_TRACK,
-        sessionId: e.participant.session_id,
-        track: e.track,
-        isLocal: e.participant.local
-      })
-    );
-    callObject.on("track-stopped", e =>
-      dispatch({ type: REMOVE_TRACK, track: e.track })
-    );
+    callObject.on("track-started", trackStarted);
+    callObject.on("track-stopped", trackStopped);
   }, [props.roomUrl]);
 
   // Render participant components
