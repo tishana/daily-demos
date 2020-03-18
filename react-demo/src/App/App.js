@@ -6,7 +6,7 @@ import {
   initialRoomState,
   CREATE_ROOM_START,
   CREATE_ROOM_FINISH
-} from "./room";
+} from "./roomState";
 import api from "../api";
 import "./App.css";
 
@@ -16,37 +16,37 @@ function roomUrlFromQueryString() {
 }
 
 function App() {
-  const [room, dispatch] = useReducer(roomReducer, {
+  const [roomState, dispatch] = useReducer(roomReducer, {
     ...initialRoomState,
     url: roomUrlFromQueryString()
   });
 
   // Update the page's URL to reflect the active call when room.url changes
   useEffect(() => {
-    if (room.url) {
+    if (roomState.url) {
       const callUrl =
         window.location.href.split("?")[0] +
-        `?roomUrl=${encodeURIComponent(room.url)}`;
+        `?roomUrl=${encodeURIComponent(roomState.url)}`;
       window.history.pushState(null, null, callUrl);
     }
-  }, [room.url]);
+  }, [roomState.url]);
 
   // Start createRoom API call when room.isCreating is set
   useEffect(() => {
-    if (room.isCreating) {
+    if (roomState.isCreating) {
       api
         .createRoom()
         .then(room => dispatch({ type: CREATE_ROOM_FINISH, url: room.url }))
         .catch(error => dispatch({ type: CREATE_ROOM_FINISH, error }));
     }
-  }, [room.isCreating]);
+  }, [roomState.isCreating]);
 
-  if (room.url) {
-    return <Call roomUrl={room.url} />;
+  if (roomState.url) {
+    return <Call roomUrl={roomState.url} />;
   } else {
     return (
       <Startbutton
-        disabled={room.isCreating}
+        disabled={roomState.isCreating}
         onClick={() => {
           dispatch({ type: CREATE_ROOM_START });
         }}

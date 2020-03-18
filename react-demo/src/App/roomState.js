@@ -21,4 +21,4 @@ function roomReducer(room, action) {
   }
 }
 
-export { CREATE_ROOM_START, CREATE_ROOM_FINISH, roomReducer, initialRoomState };
+export { initialRoomState, CREATE_ROOM_START, CREATE_ROOM_FINISH, roomReducer };

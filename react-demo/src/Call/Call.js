@@ -3,12 +3,20 @@ import DailyIframe from "@daily-co/daily-js";
 import "./Call.css";
 import Participant from "../Participant/Participant";
 import Invite from "../Invite/Invite";
-import { ADD_TRACK, REMOVE_TRACK, participantsReducer } from "./participants";
+import {
+  initialParticipantsState,
+  ADD_TRACK,
+  REMOVE_TRACK,
+  participantsReducer
+} from "./participantsState";
 
 // Props
 // - roomUrl: String
 function Call(props) {
-  const [participants, dispatch] = useReducer(participantsReducer, {});
+  const [participantsState, dispatch] = useReducer(
+    participantsReducer,
+    initialParticipantsState
+  );
 
   function trackStarted(e) {
     dispatch({
@@ -31,10 +39,10 @@ function Call(props) {
     callObject.on("track-stopped", trackStopped);
   }, [props.roomUrl]);
 
-  const participantCount = Object.keys(participants).length;
+  const participantCount = Object.keys(participantsState).length;
   return (
     <>
-      {Object.entries(participants).map(([sessionId, participant]) => {
+      {Object.entries(participantsState).map(([sessionId, participant]) => {
         return (
           <Participant
             key={sessionId}

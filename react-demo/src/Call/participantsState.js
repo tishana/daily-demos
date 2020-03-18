@@ -1,3 +1,5 @@
+const initialParticipantsState = {};
+
 // ADD_TRACK action structure:
 // - type: String
 // - track: MediaStreamTrack
@@ -63,4 +65,9 @@ function participantsReducer(participants, action) {
   }
 }
 
-export { ADD_TRACK, REMOVE_TRACK, participantsReducer };
+export {
+  initialParticipantsState,
+  ADD_TRACK,
+  REMOVE_TRACK,
+  participantsReducer
+};
