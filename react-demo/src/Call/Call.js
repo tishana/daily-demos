@@ -2,8 +2,11 @@ import React, { useEffect, useReducer } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import "./Call.css";
 import Participant from "../Participant/Participant";
+import Invite from "../Invite/Invite";
 import { ADD_TRACK, REMOVE_TRACK, participantsReducer } from "./participants";
 
+// Props
+// - roomUrl: String
 function Call(props) {
   const [participants, dispatch] = useReducer(participantsReducer, {});
 
@@ -28,7 +31,6 @@ function Call(props) {
     callObject.on("track-stopped", trackStopped);
   }, [props.roomUrl]);
 
-  // Render participant components
   const participantCount = Object.keys(participants).length;
   return (
     <>
@@ -44,6 +46,7 @@ function Call(props) {
           />
         );
       })}
+      {participantCount === 1 && <Invite roomUrl={props.roomUrl} />}
     </>
   );
 }

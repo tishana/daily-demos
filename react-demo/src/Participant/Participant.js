@@ -19,13 +19,13 @@ function Participant(props) {
 
   // Render video
   function videoComponent() {
-    function isVideoMaximized() {
-      return props.totalParticipantCount === 1 || !props.isLocal;
+    function isVideoMinimized() {
+      return props.isLocal;
     }
 
     function videoClassNames() {
       let classNames = "video";
-      classNames += isVideoMaximized() ? " max" : " min";
+      classNames += isVideoMinimized() ? " min" : " max";
       props.isLocal && (classNames += " local");
       return classNames;
     }
