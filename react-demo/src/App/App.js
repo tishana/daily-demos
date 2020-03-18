@@ -8,6 +8,7 @@ import {
   CREATE_ROOM_FINISH
 } from "./room";
 import api from "../api";
+import "./App.css";
 
 function App() {
   const [room, dispatch] = useReducer(roomReducer, initialRoomState);
