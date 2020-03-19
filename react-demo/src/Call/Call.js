@@ -34,9 +34,10 @@ function Call(props) {
       for (const [id, callObjectParticipant] of Object.entries(
         callObjectParticipants
       )) {
-        // Show loading if there's no audio or video track and we weren't already loaded
-        // (in which case it could be that the mic and camera were simply turned off).
-        // TODO: is this reasoning correct? How can we detect if other person starts with mic and camera off?
+        // Here we assume that a participant will join with audio/video enabled.
+        // This assumption lets us show a "loading" state before we receive audio/video tracks.
+        // This may not be true for all apps, but the call object doesn't yet support distinguishing
+        // between cases where audio/video are missing because they're still loading or muted.
         const previouslyLoaded =
           prevParticipants[id] && !prevParticipants[id].isLoading;
         const missingTracks = !(
