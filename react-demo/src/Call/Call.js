@@ -71,7 +71,7 @@ function Call(props) {
 
   const participantCount = Object.keys(participants).length;
   return (
-    <>
+    <div className="call">
       {Object.entries(participants).map(([id, participant]) => {
         return (
           <Participant
@@ -85,7 +85,7 @@ function Call(props) {
         );
       })}
       {participantCount === 1 && <Invite />}
-    </>
+    </div>
   );
 }
 

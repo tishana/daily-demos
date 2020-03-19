@@ -9,6 +9,7 @@ import {
 } from "./roomState";
 import api from "../api";
 import "./App.css";
+import Tray from "../Tray/Tray";
 
 function roomUrlFromQueryString() {
   const match = window.location.search.match(/roomUrl=([^&]+)/i);
@@ -41,18 +42,23 @@ function App() {
     }
   }, [roomState.isCreating]);
 
-  if (roomState.url) {
-    return <Call roomUrl={roomState.url} />;
-  } else {
-    return (
-      <Startbutton
-        disabled={roomState.isCreating}
-        onClick={() => {
-          dispatch({ type: CREATE_ROOM_START });
-        }}
-      />
-    );
-  }
+  return (
+    <div className="app">
+      {roomState.url ? (
+        <>
+          <Call roomUrl={roomState.url} />
+          <Tray />
+        </>
+      ) : (
+        <Startbutton
+          disabled={roomState.isCreating}
+          onClick={() => {
+            dispatch({ type: CREATE_ROOM_START });
+          }}
+        />
+      )}
+    </div>
+  );
 }
 
 export default App;

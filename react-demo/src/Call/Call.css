@@ -1,1 +1,4 @@
-
+.call {
+  flex: 1;
+  position: relative; /* To make it a "positioned" container so children layout works */
+}
