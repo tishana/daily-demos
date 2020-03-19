@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useRef } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import Call from "../Call/Call";
 import StartButton from "../StartButton/StartButton";
@@ -23,6 +23,7 @@ function App() {
     ...initialRoomState,
     url: roomUrlFromQueryString()
   });
+  const callObject = useRef(DailyIframe.createCallObject());
 
   // Update the page's URL to reflect the active call when room.url changes
   useEffect(() => {
@@ -45,7 +46,7 @@ function App() {
   }, [roomState.isCreating]);
 
   return (
-    <CallObjectContext.Provider value={DailyIframe.createCallObject()}>
+    <CallObjectContext.Provider value={callObject.current}>
       <div className="app">
         {roomState.url ? (
           <>
