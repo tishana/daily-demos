@@ -1,8 +1,10 @@
 .tray-button {
-  width: 48px;
-  height: 48px;
-  background-color: blue;
-  margin: 0 10px; /* Half of the 20px spacing around each tray button */
+  width: 44x;
+  height: 44px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin: 0 5px;
 }
 
 /* Acts as the first button in a new "group" of buttons separated from those to the left of it */

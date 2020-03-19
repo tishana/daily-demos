@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect } from "react";
 import Call from "../Call/Call";
-import Startbutton from "../StartButton/StartButton";
+import StartButton from "../StartButton/StartButton";
 import {
   roomReducer,
   initialRoomState,
@@ -50,7 +50,7 @@ function App() {
           <Tray />
         </>
       ) : (
-        <Startbutton
+        <StartButton
           disabled={roomState.isCreating}
           onClick={() => {
             dispatch({ type: CREATE_ROOM_START });

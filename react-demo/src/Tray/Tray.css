@@ -2,7 +2,7 @@
   flex: none;
   height: 60px;
   background-color: #f2f2f2;
-  padding: 0 10px; /* Half of the 20px spacing around each tray button */
+  padding: 0 10px;
   display: flex;
   align-items: center;
 }
