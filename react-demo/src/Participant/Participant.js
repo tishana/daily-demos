@@ -36,7 +36,10 @@ function Participant(props) {
 
   // Render audio
   function audioComponent() {
-    return props.audioTrack && <audio autoPlay playsInline ref={audioEl} />;
+    return (
+      !props.isLocal &&
+      props.audioTrack && <audio autoPlay playsInline ref={audioEl} />
+    );
   }
 
   function classNames() {
