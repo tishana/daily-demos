@@ -1,68 +1,86 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DailyIframe from "@daily-co/daily-js";
 import "./Call.css";
 import Participant from "../Participant/Participant";
 import Invite from "../Invite/Invite";
-import {
-  initialParticipantsState,
-  ADD_PARTICIPANT,
-  REMOVE_PARTICIPANT,
-  ADD_TRACK,
-  REMOVE_TRACK,
-  participantsReducer
-} from "./participantsState";
+
+// Participants state structure:
+// {
+//   local: {
+//     isLoading: ...,
+//     audioTrack: ...,
+//     videoTrack: ...
+//   },
+//   <participantSessionId1>: {
+//     isLoading: ...,
+//     audioTrack: ...,
+//     videoTrack: ...
+//   },
+//   <participantSessionId2>: { ... },
+// }
+const initialParticipants = {
+  local: { isLoading: true }
+};
 
 // Props
 // - roomUrl: String
 function Call(props) {
-  const [participantsState, dispatch] = useReducer(
-    participantsReducer,
-    initialParticipantsState
-  );
+  const callObjectRef = useRef(DailyIframe.createCallObject());
+  const [participants, setParticipants] = useState(initialParticipants);
 
-  function participantJoined(e) {
-    dispatch({ type: ADD_PARTICIPANT, sessionId: e.participant.session_id });
-  }
+  function updateParticipants(e) {
+    function toParticipants(prevParticipants, callObjectParticipants) {
+      let participants = {};
+      for (const [id, callObjectParticipant] of Object.entries(
+        callObjectParticipants
+      )) {
+        // Show loading if there's no audio or video track and we weren't already loaded
+        // (in which case it could be that the mic and camera were simply turned off).
+        // TODO: is this reasoning correct? How can we detect if other person starts with mic and camera off?
+        const previouslyLoaded =
+          prevParticipants[id] && !prevParticipants[id].isLoading;
+        const missingTracks = !(
+          callObjectParticipant.audioTrack || callObjectParticipant.videoTrack
+        );
+        participants[id] = {
+          isLoading: !previouslyLoaded && missingTracks,
+          audioTrack: callObjectParticipant.audioTrack,
+          videoTrack: callObjectParticipant.videoTrack
+        };
+      }
+      return participants;
+    }
 
-  function participantLeft(e) {
-    dispatch({ type: REMOVE_PARTICIPANT, sessionId: e.participant.session_id });
-  }
-
-  function trackStarted(e) {
-    dispatch({
-      type: ADD_TRACK,
-      sessionId: e.participant.session_id,
-      track: e.track,
-      isLocal: e.participant.local
+    console.log("[daily.co event]", e.action);
+    const callObjectParticipants = callObjectRef.current.participants();
+    setParticipants(prevParticipants => {
+      return toParticipants(prevParticipants, callObjectParticipants);
     });
   }
 
-  function trackStopped(e) {
-    dispatch({ type: REMOVE_TRACK, track: e.track });
-  }
-
-  // Initialize the call object when the roomUrl is set (e.g. when the component mounts)
+  // Initialize the call object when the roomUrl is set (e.g. when the component mounts).
   useEffect(() => {
-    const callObject = DailyIframe.createCallObject();
-    callObject.join({ url: props.roomUrl });
-    callObject.on("track-started", trackStarted);
-    callObject.on("track-stopped", trackStopped);
-    callObject.on("participant-joined", participantJoined);
-    callObject.on("participant-left", participantLeft);
+    if (props.roomUrl) {
+      const callObject = callObjectRef.current;
+      callObject.on("participant-joined", updateParticipants);
+      callObject.on("participant-updated", updateParticipants);
+      callObject.on("participant-left", updateParticipants);
+      callObject.join({ url: props.roomUrl });
+    }
   }, [props.roomUrl]);
 
-  const participantCount = Object.keys(participantsState).length;
+  const participantCount = Object.keys(participants).length;
   return (
     <>
-      {Object.entries(participantsState).map(([sessionId, participant]) => {
+      {Object.entries(participants).map(([id, participant]) => {
         return (
           <Participant
-            key={sessionId}
-            sessionId={sessionId}
-            videoTrack={participant.video}
-            audioTrack={participant.audio}
-            isLocal={participant.isLocal}
+            key={id}
+            videoTrack={participant.videoTrack}
+            audioTrack={participant.audioTrack}
+            isLocal={id === "local"}
             totalParticipantCount={participantCount}
+            isLoading={participant.isLoading}
           />
         );
       })}
