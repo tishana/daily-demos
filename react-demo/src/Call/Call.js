@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import DailyIframe from "@daily-co/daily-js";
+import React, { useEffect, useState, useContext } from "react";
 import "./Call.css";
 import Participant from "../Participant/Participant";
 import Invite from "../Invite/Invite";
+import CallObjectContext from "../CallObjectContext";
 
 // Participants state structure:
 // {
@@ -25,7 +25,7 @@ const initialParticipants = {
 // Props
 // - roomUrl: String
 function Call(props) {
-  const callObjectRef = useRef(DailyIframe.createCallObject());
+  const callObject = useContext(CallObjectContext);
   const [participants, setParticipants] = useState(initialParticipants);
 
   function updateParticipants(e) {
@@ -52,16 +52,15 @@ function Call(props) {
     }
 
     console.log("[daily.co event]", e.action);
-    const callObjectParticipants = callObjectRef.current.participants();
+    const callObjectParticipants = callObject.participants();
     setParticipants(prevParticipants => {
       return toParticipants(prevParticipants, callObjectParticipants);
     });
   }
 
-  // Initialize the call object when the roomUrl is set (e.g. when the component mounts).
+  // Join the call when the roomUrl is set (e.g. when the component mounts).
   useEffect(() => {
     if (props.roomUrl) {
-      const callObject = callObjectRef.current;
       callObject.on("participant-joined", updateParticipants);
       callObject.on("participant-updated", updateParticipants);
       callObject.on("participant-left", updateParticipants);

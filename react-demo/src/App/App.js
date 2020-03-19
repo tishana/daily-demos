@@ -1,4 +1,5 @@
 import React, { useReducer, useEffect } from "react";
+import DailyIframe from "@daily-co/daily-js";
 import Call from "../Call/Call";
 import StartButton from "../StartButton/StartButton";
 import {
@@ -10,6 +11,7 @@ import {
 import api from "../api";
 import "./App.css";
 import Tray from "../Tray/Tray";
+import CallObjectContext from "../CallObjectContext";
 
 function roomUrlFromQueryString() {
   const match = window.location.search.match(/roomUrl=([^&]+)/i);
@@ -32,7 +34,7 @@ function App() {
     }
   }, [roomState.url]);
 
-  // Start createRoom API call when room.isCreating is set
+  // Start createRoom API call when roomState.isCreating is set
   useEffect(() => {
     if (roomState.isCreating) {
       api
@@ -43,21 +45,23 @@ function App() {
   }, [roomState.isCreating]);
 
   return (
-    <div className="app">
-      {roomState.url ? (
-        <>
-          <Call roomUrl={roomState.url} />
-          <Tray />
-        </>
-      ) : (
-        <StartButton
-          disabled={roomState.isCreating}
-          onClick={() => {
-            dispatch({ type: CREATE_ROOM_START });
-          }}
-        />
-      )}
-    </div>
+    <CallObjectContext.Provider value={DailyIframe.createCallObject()}>
+      <div className="app">
+        {roomState.url ? (
+          <>
+            <Call roomUrl={roomState.url} />
+            <Tray />
+          </>
+        ) : (
+          <StartButton
+            disabled={roomState.isCreating}
+            onClick={() => {
+              dispatch({ type: CREATE_ROOM_START });
+            }}
+          />
+        )}
+      </div>
+    </CallObjectContext.Provider>
   );
 }
 
