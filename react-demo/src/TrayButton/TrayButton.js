@@ -15,9 +15,10 @@ import Icon, {
 function TrayButton(props) {
   return (
     <button
+      onClick={props.onClick}
       className={"tray-button" + (props.newButtonGroup ? " new-group" : "")}
     >
-      <Icon type={props.type} />
+      <Icon type={props.type} highlighted={props.highlighted} />
     </button>
   );
 }

@@ -7,7 +7,12 @@ const TYPE_LEAVE = "leave";
 
 // Props:
 // - type
+// - highlighted
 function Icon(props) {
+  function fillColor() {
+    return props.highlighted ? "#fb5554" : "#000000";
+  }
+
   function path() {
     switch (props.type) {
       case TYPE_MUTE_CAMERA:
@@ -22,7 +27,7 @@ function Icon(props) {
             <g
               id="Assets-for-Export"
               transform="translate(-24.000000, 0.000000)"
-              fill="#000000"
+              fill={fillColor()}
             >
               <g
                 id="Icon-Camera-Off-24px"
@@ -48,7 +53,7 @@ function Icon(props) {
             <g
               id="Assets-for-Export"
               transform="translate(-120.000000, 0.000000)"
-              fill="#000000"
+              fill={fillColor()}
             >
               <g
                 id="Icon-Microphone-Off-24px"
@@ -65,6 +70,7 @@ function Icon(props) {
       case TYPE_SCREEN:
         return (
           <path
+            fill={fillColor()}
             fillRule="evenodd"
             d="M2 5.006C2 3.898 2.898 3 3.99 3h16.02C21.108 3 22 3.897 22 5.006v9.988A2.003 2.003 0 0 1 20.01 17H3.99C2.892 17 2 16.103 2 14.994V5.006zm2 .99v8.009c0 .54.448.995 1 .995h14c.555 0 1-.446 1-.995v-8.01c0-.54-.448-.995-1-.995H5c-.555 0-1 .446-1 .995zM7 20c0-.552.456-1 .995-1h8.01c.55 0 .995.444.995 1 0 .552-.456 1-.995 1h-8.01A.995.995 0 0 1 7 20z"
           />
@@ -73,7 +79,7 @@ function Icon(props) {
         return (
           <path
             d="M19.347 11l-1.71-1.638a.832.832 0 0 1 0-1.222l.03-.03a.922.922 0 0 1 1.27-.003l3.34 3.2a.95.95 0 0 1 0 1.386l-3.34 3.2a.918.918 0 0 1-1.27-.003l-.03-.03a.842.842 0 0 1 0-1.221L19.348 13h-7.352A.995.995 0 0 1 11 12c0-.552.456-1 .995-1h7.352zM16 10h-2V7.995c0-.54-.446-.995-.997-.995H6.997A1 1 0 0 0 6 7.995v8.01c0 .54.446.995.997.995h6.006a1 1 0 0 0 .997-.995V14h2v2.994A2.009 2.009 0 0 1 13.991 19H6.01A2.007 2.007 0 0 1 4 16.994V7.006C4 5.898 4.902 5 6.009 5h7.982C15.101 5 16 5.897 16 7.006V10z"
-            fill="#fb5554"
+            fill={fillColor()}
             fillRule="evenodd"
           />
         );
