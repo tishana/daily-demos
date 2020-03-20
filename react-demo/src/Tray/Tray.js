@@ -63,7 +63,7 @@ function Tray() {
         onClick={toggleMic}
       />
       <TrayButton type={TYPE_SCREEN} />
-      <TrayButton type={TYPE_LEAVE} newButtonGroup={true} />
+      <TrayButton type={TYPE_LEAVE} newButtonGroup={true} highlighted={true} />
     </div>
   );
 }
