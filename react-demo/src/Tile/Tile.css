@@ -1,42 +1,39 @@
-.participant.min {
+.tile.small {
   width: 200px;
-  position: absolute;
-  bottom: 0px;
-  margin: 10px;
-  z-index: 1;
-  border-radius: 4px;
+  margin: 0 10px;
+  position: relative;
 }
 
-.participant.max {
-  width: 100%;
-  position: absolute;
+.tile.large {
+  flex: 1 1 30%;
+  position: relative;
 }
 
-.participant video {
+.tile video {
   width: 100%;
   position: absolute;
   top: 0px;
 }
 
-.participant .background {
+.tile .background {
   background-color: #000000;
   width: 100%;
   padding-top: 56.25%; /* Hard-coded 16:9 aspect ratio */
 }
 
-.participant.local video {
+.tile.local video {
   transform: scale(-1, 1);
 }
 
-.participant.min video {
+.tile.small video {
   border-radius: 4px;
 }
 
-.participant.min .background {
+.tile.small .background {
   border-radius: 4px;
 }
 
-.participant .loading {
+.tile .loading {
   position: absolute;
   color: #ffffff;
   top: 50%;

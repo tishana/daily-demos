@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import "./Call.css";
-import Participant from "../Participant/Participant";
+import Participant from "../Tile/Tile";
 import Invite from "../Invite/Invite";
 import CallObjectContext from "../CallObjectContext";
 
@@ -69,22 +69,33 @@ function Call(props) {
     }
   }, [props.roomUrl]);
 
+  // Render either a large or small tile for each participant
+  let largeTiles = [];
+  let smallTiles = [];
+  Object.entries(participants).forEach(([id, participant]) => {
+    const tile = (
+      <Participant
+        key={id}
+        videoTrack={participant.videoTrack}
+        audioTrack={participant.audioTrack}
+        isLocal={id === "local"} // TODO: change to isLarge or something
+        isLoading={participant.isLoading}
+      />
+    );
+    if (id === "local") {
+      smallTiles.push(tile);
+    } else {
+      largeTiles.push(tile);
+    }
+  });
+
+  // Render call
   const participantCount = Object.keys(participants).length;
   return (
     <div className="call">
-      {Object.entries(participants).map(([id, participant]) => {
-        return (
-          <Participant
-            key={id}
-            videoTrack={participant.videoTrack}
-            audioTrack={participant.audioTrack}
-            isLocal={id === "local"}
-            totalParticipantCount={participantCount}
-            isLoading={participant.isLoading}
-          />
-        );
-      })}
       {participantCount === 1 && <Invite />}
+      <div class="large-tiles">{largeTiles}</div>
+      <div class="small-tiles">{smallTiles}</div>
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import "./Participant.css";
+import "./Tile.css";
 
 // Props
 // - videoTrack: MediaStreamTrack?
 // - audioTrack: MediaStreamTrack?
 // - isLocal: Boolean
 // - isLoading: Boolean
-function Participant(props) {
+function Tile(props) {
   const videoEl = useRef(null);
   const audioEl = useRef(null);
 
@@ -46,8 +46,8 @@ function Participant(props) {
     function isVideoMinimized() {
       return props.isLocal;
     }
-    let classNames = "participant";
-    classNames += isVideoMinimized() ? " min" : " max";
+    let classNames = "tile";
+    classNames += isVideoMinimized() ? " small" : " large";
     props.isLocal && (classNames += " local");
     return classNames;
   }
@@ -62,4 +62,4 @@ function Participant(props) {
   );
 }
 
-export default Participant;
+export default Tile;
