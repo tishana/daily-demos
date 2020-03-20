@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import "./Call.css";
-import Participant from "../Tile/Tile";
+import Tile from "../Tile/Tile";
 import Invite from "../Invite/Invite";
 import CallObjectContext from "../CallObjectContext";
 
@@ -74,7 +74,7 @@ function Call(props) {
   let smallTiles = [];
   Object.entries(participants).forEach(([id, participant]) => {
     const tile = (
-      <Participant
+      <Tile
         key={id}
         videoTrack={participant.videoTrack}
         audioTrack={participant.audioTrack}
