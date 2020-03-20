@@ -4,7 +4,11 @@ import Tile from "../Tile/Tile";
 import Invite from "../Invite/Invite";
 import CallObjectContext from "../CallObjectContext";
 
-// Participants state structure:
+// Call items here are representations of logical "inputs" into the call.
+// Each is represented visually as a tile, and may have accompanying audio.
+// Each participant's audio and video is bundled into a call item.
+// Each shared screen is its own call item.
+// Call items structure:
 // {
 //   local: {
 //     isLoading: ...,
@@ -17,54 +21,48 @@ import CallObjectContext from "../CallObjectContext";
 //     videoTrack: ...
 //   },
 //   <participantSessionId2>: { ... },
+//   <participantSessionId1>-screen: { ... }
 // }
-const initialParticipants = {
+const initialCallItems = {
   local: { isLoading: true }
 };
+
+function getCallItems(participants, prevCallItems) {
+  let callItems = {};
+  for (const [id, participant] of Object.entries(participants)) {
+    // Here we assume that a participant will join with audio/video enabled.
+    // This assumption lets us show a "loading" state before we receive audio/video tracks.
+    // This may not be true for all apps, but the call object doesn't yet support distinguishing
+    // between cases where audio/video are missing because they're still loading or muted.
+    const previouslyLoaded = prevCallItems[id] && !prevCallItems[id].isLoading;
+    const missingTracks = !(participants.audioTrack || participants.videoTrack);
+    callItems[id] = {
+      isLoading: !previouslyLoaded && missingTracks,
+      audioTrack: participant.audioTrack,
+      videoTrack: participant.videoTrack
+    };
+  }
+  return callItems;
+}
 
 // Props
 // - roomUrl: String
 function Call(props) {
   const callObject = useContext(CallObjectContext);
-  const [participants, setParticipants] = useState(initialParticipants);
+  const [callItems, setCallItems] = useState(initialCallItems);
 
-  function updateParticipants(e) {
-    function toParticipants(prevParticipants, callObjectParticipants) {
-      let participants = {};
-      for (const [id, callObjectParticipant] of Object.entries(
-        callObjectParticipants
-      )) {
-        // Here we assume that a participant will join with audio/video enabled.
-        // This assumption lets us show a "loading" state before we receive audio/video tracks.
-        // This may not be true for all apps, but the call object doesn't yet support distinguishing
-        // between cases where audio/video are missing because they're still loading or muted.
-        const previouslyLoaded =
-          prevParticipants[id] && !prevParticipants[id].isLoading;
-        const missingTracks = !(
-          callObjectParticipant.audioTrack || callObjectParticipant.videoTrack
-        );
-        participants[id] = {
-          isLoading: !previouslyLoaded && missingTracks,
-          audioTrack: callObjectParticipant.audioTrack,
-          videoTrack: callObjectParticipant.videoTrack
-        };
-      }
-      return participants;
-    }
-
+  function handleParticipantsChanged(e) {
     console.log("[daily.co event]", e.action);
-    const callObjectParticipants = callObject.participants();
-    setParticipants(prevParticipants => {
-      return toParticipants(prevParticipants, callObjectParticipants);
-    });
+    const participants = callObject.participants();
+    setCallItems(prevCallItems => getCallItems(participants, prevCallItems));
   }
 
   // Join the call when the roomUrl is set (e.g. when the component mounts).
   useEffect(() => {
     if (props.roomUrl) {
-      callObject.on("participant-joined", updateParticipants);
-      callObject.on("participant-updated", updateParticipants);
-      callObject.on("participant-left", updateParticipants);
+      callObject.on("participant-joined", handleParticipantsChanged);
+      callObject.on("participant-updated", handleParticipantsChanged);
+      callObject.on("participant-left", handleParticipantsChanged);
       callObject.join({ url: props.roomUrl });
     }
   }, [props.roomUrl]);
@@ -72,14 +70,14 @@ function Call(props) {
   // Render either a large or small tile for each participant
   let largeTiles = [];
   let smallTiles = [];
-  Object.entries(participants).forEach(([id, participant]) => {
+  Object.entries(callItems).forEach(([id, callItem]) => {
     const tile = (
       <Tile
         key={id}
-        videoTrack={participant.videoTrack}
-        audioTrack={participant.audioTrack}
+        videoTrack={callItem.videoTrack}
+        audioTrack={callItem.audioTrack}
         isLocal={id === "local"} // TODO: change to isLarge or something
-        isLoading={participant.isLoading}
+        isLoading={callItem.isLoading}
       />
     );
     if (id === "local") {
@@ -90,10 +88,9 @@ function Call(props) {
   });
 
   // Render call
-  const participantCount = Object.keys(participants).length;
   return (
     <div className="call">
-      {participantCount === 1 && <Invite />}
+      {Object.keys(callItems).length === 1 && <Invite />}
       <div className="large-tiles">{largeTiles}</div>
       <div className="small-tiles">{smallTiles}</div>
     </div>
