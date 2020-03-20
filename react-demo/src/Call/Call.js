@@ -94,8 +94,8 @@ function Call(props) {
   return (
     <div className="call">
       {participantCount === 1 && <Invite />}
-      <div class="large-tiles">{largeTiles}</div>
-      <div class="small-tiles">{smallTiles}</div>
+      <div className="large-tiles">{largeTiles}</div>
+      <div className="small-tiles">{smallTiles}</div>
     </div>
   );
 }
