@@ -58,6 +58,12 @@ function Tray() {
       : callObject.startScreenShare();
   }
 
+  // - Leave
+
+  function leaveCall(params) {
+    window.location.href = window.location.href.split("?")[0];
+  }
+
   // Start listening for participant changes on component mount.
   // This event will capture any changes to your audio/video mute state.
   useEffect(() => {
@@ -85,7 +91,12 @@ function Tray() {
         highlighted={isSharingScreen}
         onClick={toggleSharingScreen}
       />
-      <TrayButton type={TYPE_LEAVE} newButtonGroup={true} highlighted={true} />
+      <TrayButton
+        type={TYPE_LEAVE}
+        newButtonGroup={true}
+        highlighted={true}
+        onClick={leaveCall}
+      />
     </div>
   );
 }
