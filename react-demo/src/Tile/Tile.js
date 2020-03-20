@@ -4,7 +4,8 @@ import "./Tile.css";
 // Props
 // - videoTrack: MediaStreamTrack?
 // - audioTrack: MediaStreamTrack?
-// - isLocal: Boolean
+// - isLocalPerson: Boolean
+// - isLarge: Boolean
 // - isLoading: Boolean
 function Tile(props) {
   const videoEl = useRef(null);
@@ -37,18 +38,15 @@ function Tile(props) {
   // Render audio
   function audioComponent() {
     return (
-      !props.isLocal &&
+      !props.isLocalPerson &&
       props.audioTrack && <audio autoPlay playsInline ref={audioEl} />
     );
   }
 
   function classNames() {
-    function isVideoMinimized() {
-      return props.isLocal;
-    }
     let classNames = "tile";
-    classNames += isVideoMinimized() ? " small" : " large";
-    props.isLocal && (classNames += " local");
+    classNames += props.isLarge ? " large" : " small";
+    props.isLocalPerson && (classNames += " local");
     return classNames;
   }
 

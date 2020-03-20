@@ -41,8 +41,26 @@ function getCallItems(participants, prevCallItems) {
       audioTrack: participant.audioTrack,
       videoTrack: participant.videoTrack
     };
+    if (participant.screenVideoTrack) {
+      callItems[id + "-screen"] = {
+        isLoading: false,
+        videoTrack: participant.screenVideoTrack
+      };
+    }
   }
   return callItems;
+}
+
+function isLocalPerson(id) {
+  return id === "local";
+}
+
+function isScreenShare(id) {
+  return id.endsWith("-screen");
+}
+
+function containsScreenShare(callItems) {
+  return Object.keys(callItems).some(id => isScreenShare(id));
 }
 
 // Props
@@ -71,19 +89,23 @@ function Call(props) {
   let largeTiles = [];
   let smallTiles = [];
   Object.entries(callItems).forEach(([id, callItem]) => {
+    const isLarge =
+      isScreenShare(id) ||
+      (!isLocalPerson(id) && !containsScreenShare(callItems));
     const tile = (
       <Tile
         key={id}
         videoTrack={callItem.videoTrack}
         audioTrack={callItem.audioTrack}
-        isLocal={id === "local"} // TODO: change to isLarge or something
+        isLocalPerson={isLocalPerson(id)}
+        isLarge={isLarge}
         isLoading={callItem.isLoading}
       />
     );
-    if (id === "local") {
-      smallTiles.push(tile);
-    } else {
+    if (isLarge) {
       largeTiles.push(tile);
+    } else {
+      smallTiles.push(tile);
     }
   });
 
