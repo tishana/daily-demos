@@ -34,10 +34,10 @@ function getCallItems(participants, prevCallItems) {
     // This assumption lets us show a "loading" state before we receive audio/video tracks.
     // This may not be true for all apps, but the call object doesn't yet support distinguishing
     // between cases where audio/video are missing because they're still loading or muted.
-    const previouslyLoaded = prevCallItems[id] && !prevCallItems[id].isLoading;
-    const missingTracks = !(participants.audioTrack || participants.videoTrack);
+    const hasLoaded = prevCallItems[id] && !prevCallItems[id].isLoading;
+    const missingTracks = !(participant.audioTrack || participant.videoTrack);
     callItems[id] = {
-      isLoading: !previouslyLoaded && missingTracks,
+      isLoading: !hasLoaded && missingTracks,
       audioTrack: participant.audioTrack,
       videoTrack: participant.videoTrack
     };
