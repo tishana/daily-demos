@@ -22,29 +22,42 @@ function Call(props) {
   const [callState, dispatch] = useReducer(callReducer, initialCallState);
 
   /**
-   * Join the call when the roomUrl is set (e.g. when the component mounts).
+   * Start listening for participant changes, when the roomUrl and callObject are set.
    */
   useEffect(() => {
-    if (props.roomUrl) {
-      for (const event of [
-        "participant-joined",
-        "participant-updated",
-        "participant-left"
-      ]) {
-        callObject.on(event, e => {
-          console.log("[daily.co event]", e.action);
-          dispatch({
-            type: PARTICIPANTS_CHANGE,
-            participants: callObject.participants()
-          });
+    if (!callObject) return;
+
+    for (const event of [
+      "participant-joined",
+      "participant-updated",
+      "participant-left"
+    ]) {
+      callObject.on(event, e => {
+        console.log("[daily.co event]", e.action);
+        dispatch({
+          type: PARTICIPANTS_CHANGE,
+          participants: callObject.participants()
         });
-      }
-      callObject.join({ url: props.roomUrl });
-      setTimeout(() => {
-        dispatch({ type: CLICK_ALLOW_TIMEOUT });
-      }, 2500);
+      });
     }
-  }, [props.roomUrl, callObject]);
+  }, [callObject]);
+
+  /**
+   * Join the call when the roomUrl and callObject are set.
+   */
+  useEffect(() => {
+    if (!(props.roomUrl && callObject)) return;
+    callObject.join({ url: props.roomUrl });
+  }, [callObject, props.roomUrl]);
+
+  /**
+   * Start a timer to show the "click allow" message, when the component mounts.
+   */
+  useEffect(() => {
+    setTimeout(() => {
+      dispatch({ type: CLICK_ALLOW_TIMEOUT });
+    }, 2500);
+  }, []);
 
   function getTiles() {
     let largeTiles = [];

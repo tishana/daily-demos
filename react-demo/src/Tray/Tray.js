@@ -8,48 +8,40 @@ import TrayButton, {
 } from "../TrayButton/TrayButton";
 import CallObjectContext from "../CallObjectContext";
 
+/**
+ * Gets [isCameraMuted, isMicMuted, isSharingScreen].
+ * This function is declared outside Tray() so it's not recreated every render
+ * (which would require us to declare it as a useEffect dependency).
+ */
+function getStreamStates(callObject) {
+  let isCameraMuted,
+    isMicMuted,
+    isSharingScreen = false;
+  if (
+    callObject &&
+    callObject.participants() &&
+    callObject.participants().local
+  ) {
+    const localParticipant = callObject.participants().local;
+    isCameraMuted = !localParticipant.video;
+    isMicMuted = !localParticipant.audio;
+    isSharingScreen = localParticipant.screen;
+  }
+  return [isCameraMuted, isMicMuted, isSharingScreen];
+}
+
 function Tray() {
   const callObject = useContext(CallObjectContext);
-  const [isCameraMuted, setCameraMuted] = useState(getIsCameraMuted());
-  const [isMicMuted, setMicMuted] = useState(getIsMicMuted());
-  const [isSharingScreen, setSharingScreen] = useState(getIsSharingScreen());
-
-  // --- Camera methods ---
-
-  function getIsCameraMuted() {
-    return (
-      callObject.participants() &&
-      callObject.participants().local &&
-      !callObject.participants().local.video
-    );
-  }
+  const [isCameraMuted, setCameraMuted] = useState(false);
+  const [isMicMuted, setMicMuted] = useState(false);
+  const [isSharingScreen, setSharingScreen] = useState(false);
 
   function toggleCamera() {
     callObject.setLocalVideo(isCameraMuted);
   }
 
-  // --- Mic methods ---
-
-  function getIsMicMuted() {
-    return (
-      callObject.participants() &&
-      callObject.participants().local &&
-      !callObject.participants().local.audio
-    );
-  }
-
   function toggleMic() {
     callObject.setLocalAudio(isMicMuted);
-  }
-
-  // --- Screen sharing methods ---
-
-  function getIsSharingScreen() {
-    return (
-      callObject.participants() &&
-      callObject.participants().local &&
-      callObject.participants().local.screen
-    );
   }
 
   function toggleSharingScreen() {
@@ -58,23 +50,37 @@ function Tray() {
       : callObject.startScreenShare();
   }
 
-  // --- Leave method ---
-
   function leaveCall(params) {
     window.location.href = window.location.href.split("?")[0];
   }
 
   /**
-   * Start listening for participant changes on component mount.
+   * Start listening for participant changes when callObject is set (i.e. when the component mounts).
    * This event will capture any changes to your audio/video mute state.
    */
   useEffect(() => {
+    if (!callObject) {
+      return;
+    }
+
+    // Initialize states
+    const [isCameraMuted, isMicMuted, isSharingScreen] = getStreamStates(
+      callObject
+    );
+    setCameraMuted(isCameraMuted);
+    setMicMuted(isMicMuted);
+    setSharingScreen(isSharingScreen);
+
+    // Listen for changes to local participant and update states accordingly
     callObject.on("participant-updated", () => {
-      setCameraMuted(getIsCameraMuted());
-      setMicMuted(getIsMicMuted());
-      setSharingScreen(getIsSharingScreen());
+      const [isCameraMuted, isMicMuted, isSharingScreen] = getStreamStates(
+        callObject
+      );
+      setCameraMuted(isCameraMuted);
+      setMicMuted(isMicMuted);
+      setSharingScreen(isSharingScreen);
     });
-  }, []);
+  }, [callObject]);
 
   return (
     <div className="tray">
