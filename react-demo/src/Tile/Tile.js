@@ -1,49 +1,52 @@
 import React, { useEffect, useRef } from "react";
 import "./Tile.css";
 
-// Props
-// - videoTrack: MediaStreamTrack?
-// - audioTrack: MediaStreamTrack?
-// - isLocalPerson: Boolean
-// - isLarge: Boolean
-// - isLoading: Boolean
+/**
+ * Props
+ * - videoTrack: MediaStreamTrack?
+ * - audioTrack: MediaStreamTrack?
+ * - isLocalPerson: Boolean
+ * - isLarge: Boolean
+ * - isLoading: Boolean
+ */
 function Tile(props) {
   const videoEl = useRef(null);
   const audioEl = useRef(null);
 
-  // When video track changes, update video srcObject
+  /**
+   * When video track changes, update video srcObject
+   */
   useEffect(() => {
     videoEl.current &&
       (videoEl.current.srcObject = new MediaStream([props.videoTrack]));
   }, [props.videoTrack]);
 
-  // When audio track changes, update audio srcObject
+  /**
+   * When audio track changes, update audio srcObject
+   */
   useEffect(() => {
     audioEl.current &&
       (audioEl.current.srcObject = new MediaStream([props.audioTrack]));
   }, [props.audioTrack]);
 
-  // Render loading placeholder
-  function loadingComponent() {
+  function getLoadingComponent() {
     return props.isLoading && <p className="loading">Loading...</p>;
   }
 
-  // Render video
-  function videoComponent() {
+  function getVideoComponent() {
     return (
       props.videoTrack && <video autoPlay muted playsInline ref={videoEl} />
     );
   }
 
-  // Render audio
-  function audioComponent() {
+  function getAudioComponent() {
     return (
       !props.isLocalPerson &&
       props.audioTrack && <audio autoPlay playsInline ref={audioEl} />
     );
   }
 
-  function classNames() {
+  function getClassNames() {
     let classNames = "tile";
     classNames += props.isLarge ? " large" : " small";
     props.isLocalPerson && (classNames += " local");
@@ -51,11 +54,11 @@ function Tile(props) {
   }
 
   return (
-    <div className={classNames()}>
+    <div className={getClassNames()}>
       <div className="background" />
-      {loadingComponent()}
-      {videoComponent()}
-      {audioComponent()}
+      {getLoadingComponent()}
+      {getVideoComponent()}
+      {getAudioComponent()}
     </div>
   );
 }

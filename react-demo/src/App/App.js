@@ -25,7 +25,9 @@ function App() {
   });
   const callObject = useRef(DailyIframe.createCallObject());
 
-  // Update the page's URL to reflect the active call when room.url changes
+  /**
+   * Update the page's URL to reflect the active call when roomState.url changes
+   */
   useEffect(() => {
     if (roomState.url) {
       const callUrl =
@@ -35,7 +37,9 @@ function App() {
     }
   }, [roomState.url]);
 
-  // Start createRoom API call when roomState.isCreating is set
+  /**
+   * Start createRoom API call when roomState.isCreating is set
+   */
   useEffect(() => {
     if (roomState.isCreating) {
       api

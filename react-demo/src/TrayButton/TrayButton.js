@@ -7,11 +7,13 @@ import Icon, {
   TYPE_LEAVE
 } from "../Icon/Icon";
 
-// Props:
-// - type
-// - highlighted
-// - onClick
-// - newButtonGroup
+/**
+ * Props:
+ * - type
+ * - highlighted
+ * - onClick
+ * - newButtonGroup
+ */
 function TrayButton(props) {
   return (
     <button

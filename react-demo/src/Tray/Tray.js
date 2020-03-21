@@ -14,7 +14,7 @@ function Tray() {
   const [isMicMuted, setMicMuted] = useState(getIsMicMuted());
   const [isSharingScreen, setSharingScreen] = useState(getIsSharingScreen());
 
-  // - Camera methods
+  // --- Camera methods ---
 
   function getIsCameraMuted() {
     return (
@@ -28,7 +28,7 @@ function Tray() {
     callObject.setLocalVideo(isCameraMuted);
   }
 
-  // - Mic methods
+  // --- Mic methods ---
 
   function getIsMicMuted() {
     return (
@@ -42,7 +42,7 @@ function Tray() {
     callObject.setLocalAudio(isMicMuted);
   }
 
-  // - Screen sharing methods
+  // --- Screen sharing methods ---
 
   function getIsSharingScreen() {
     return (
@@ -58,14 +58,16 @@ function Tray() {
       : callObject.startScreenShare();
   }
 
-  // - Leave
+  // --- Leave method ---
 
   function leaveCall(params) {
     window.location.href = window.location.href.split("?")[0];
   }
 
-  // Start listening for participant changes on component mount.
-  // This event will capture any changes to your audio/video mute state.
+  /**
+   * Start listening for participant changes on component mount.
+   * This event will capture any changes to your audio/video mute state.
+   */
   useEffect(() => {
     callObject.on("participant-updated", () => {
       setCameraMuted(getIsCameraMuted());

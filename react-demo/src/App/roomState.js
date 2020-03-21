@@ -1,14 +1,22 @@
 const initialRoomState = { isCreating: false, url: null, error: null };
 
-// CREATE_ROOM_START action structure:
-// - type: String
+// --- Actions ---
+
+/**
+ * CREATE_ROOM_START action structure:
+ * - type: String
+ */
 const CREATE_ROOM_START = "CREATE_ROOM_START";
 
-// CREATE_ROOM_FINISH action structure:
-// - type: String
-// - url: String?
-// - error: Error?
+/**
+ * CREATE_ROOM_FINISH action structure:
+ * - type: String
+ * - url: String?
+ * - error: Error?
+ */
 const CREATE_ROOM_FINISH = "CREATE_ROOM_FINISH";
+
+// --- Reducer ---
 
 function roomReducer(room, action) {
   switch (action.type) {

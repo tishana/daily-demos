@@ -1,9 +1,11 @@
 import React from "react";
 import "./StartButton.css";
 
-// Props:
-// - disabled
-// - onClick
+/**
+ * Props:
+ * - disabled
+ * - onClick
+ */
 function StartButton(props) {
   return (
     <button
