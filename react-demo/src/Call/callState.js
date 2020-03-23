@@ -16,7 +16,7 @@ const initialCallState = {
       videoTrack: null
     }
   },
-  showClickAllow: false
+  clickAllowTimeoutFired: false
 };
 
 // --- Actions ---
@@ -41,7 +41,7 @@ function callReducer(callState, action) {
     case CLICK_ALLOW_TIMEOUT:
       return {
         ...callState,
-        showClickAllow: getShowClickAllow(callState.callItems)
+        clickAllowTimeoutFired: true
       };
     case PARTICIPANTS_CHANGE:
       const callItems = getCallItems(action.participants, callState.callItems);
@@ -52,12 +52,6 @@ function callReducer(callState, action) {
     default:
       throw new Error();
   }
-}
-
-function getShowClickAllow(callItems) {
-  const localCallItem = getLocalCallItem(callItems);
-  const hasLoaded = localCallItem && !localCallItem.isLoading;
-  return !hasLoaded;
 }
 
 function getLocalCallItem(callItems) {
@@ -103,6 +97,22 @@ function containsScreenShare(callItems) {
   return Object.keys(callItems).some(id => isScreenShare(id));
 }
 
+function getUIMessage(callState) {
+  function shouldShowClickAllow() {
+    const localCallItem = getLocalCallItem(callState.callItems);
+    const hasLoaded = localCallItem && !localCallItem.isLoading;
+    return !hasLoaded && callState.clickAllowTimeoutFired;
+  }
+
+  let message = "";
+  if (shouldShowClickAllow()) {
+    message = 'Click "Allow" to enable camera and mic access';
+  } else if (Object.keys(callState.callItems).length === 1) {
+    message = "Copy and share this page's URL to invite others";
+  }
+  return message;
+}
+
 export {
   initialCallState,
   CLICK_ALLOW_TIMEOUT,
@@ -110,5 +120,6 @@ export {
   callReducer,
   isLocal,
   isScreenShare,
-  containsScreenShare
+  containsScreenShare,
+  getUIMessage
 };

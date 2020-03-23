@@ -10,7 +10,8 @@ import {
   callReducer,
   isLocal,
   isScreenShare,
-  containsScreenShare
+  containsScreenShare,
+  getUIMessage
 } from "./callState";
 
 /**
@@ -85,18 +86,8 @@ function Call(props) {
     return [largeTiles, smallTiles];
   }
 
-  function getMessage() {
-    let message = "";
-    if (callState.showClickAllow) {
-      message = 'Click "Allow" to enable camera and mic access';
-    } else if (Object.keys(callState.callItems).length === 1) {
-      message = "Copy and share this page's URL to invite others";
-    }
-    return message;
-  }
-
   const [largeTiles, smallTiles] = getTiles();
-  const message = getMessage();
+  const message = getUIMessage(callState);
   return (
     <div className="call">
       {message && <CallMessage message={message} />}
