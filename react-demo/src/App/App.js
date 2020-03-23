@@ -1,5 +1,4 @@
-import React, { useReducer, useEffect, useRef } from "react";
-import DailyIframe from "@daily-co/daily-js";
+import React, { useReducer, useEffect } from "react";
 import Call from "../Call/Call";
 import StartButton from "../StartButton/StartButton";
 import {
@@ -12,45 +11,40 @@ import api from "../api";
 import "./App.css";
 import Tray from "../Tray/Tray";
 import CallObjectContext from "../CallObjectContext";
-
-function roomUrlFromQueryString() {
-  const match = window.location.search.match(/roomUrl=([^&]+)/i);
-  return match && match[1] ? decodeURIComponent(match[1]) : null;
-}
+import { roomUrlFromPageUrl, pageUrlFromRoomUrl } from "./urlUtils";
 
 function App() {
-  const [roomState, dispatch] = useReducer(roomReducer, {
-    ...initialRoomState,
-    url: roomUrlFromQueryString()
-  });
-  const callObject = useRef(DailyIframe.createCallObject());
+  const [roomState, dispatch] = useReducer(roomReducer, initialRoomState);
+
+  /**
+   * Check if room already specified in page URL, when component mounts.
+   */
+  useEffect(() => {
+    const roomUrl = roomUrlFromPageUrl();
+    roomUrl && dispatch({ type: CREATE_ROOM_FINISH, url: roomUrl });
+  }, []);
 
   /**
    * Update the page's URL to reflect the active call when roomState.url changes
    */
   useEffect(() => {
-    if (roomState.url) {
-      const callUrl =
-        window.location.href.split("?")[0] +
-        `?roomUrl=${encodeURIComponent(roomState.url)}`;
-      window.history.pushState(null, null, callUrl);
-    }
+    if (!roomState.url) return;
+    window.history.pushState(null, null, pageUrlFromRoomUrl(roomState.url));
   }, [roomState.url]);
 
   /**
    * Start createRoom API call when roomState.isCreating is set
    */
   useEffect(() => {
-    if (roomState.isCreating) {
-      api
-        .createRoom()
-        .then(room => dispatch({ type: CREATE_ROOM_FINISH, url: room.url }))
-        .catch(error => dispatch({ type: CREATE_ROOM_FINISH, error }));
-    }
+    if (!roomState.isCreating) return;
+    api
+      .createRoom()
+      .then(room => dispatch({ type: CREATE_ROOM_FINISH, url: room.url }))
+      .catch(error => dispatch({ type: CREATE_ROOM_FINISH, error }));
   }, [roomState.isCreating]);
 
   return (
-    <CallObjectContext.Provider value={callObject.current}>
+    <CallObjectContext.Provider value={roomState.callObject}>
       <div className="app">
         {roomState.url ? (
           <>
