@@ -7,12 +7,17 @@ import {
   initialCallState,
   CLICK_ALLOW_TIMEOUT,
   PARTICIPANTS_CHANGE,
+  CAM_OR_MIC_ERROR,
   callReducer,
   isLocal,
   isScreenShare,
   containsScreenShare,
-  getUIMessage
+  getMessageLines
 } from "./callState";
+
+function logDailyEvent(e) {
+  console.log("[daily.co event]", e.action);
+}
 
 /**
  * Props
@@ -34,13 +39,28 @@ function Call(props) {
       "participant-left"
     ]) {
       callObject.on(event, e => {
-        console.log("[daily.co event]", e.action);
+        logDailyEvent(e);
         dispatch({
           type: PARTICIPANTS_CHANGE,
           participants: callObject.participants()
         });
       });
     }
+  }, [callObject]);
+
+  /**
+   * Start listening for call errors, when the callObject is set.
+   */
+  useEffect(() => {
+    if (!callObject) return;
+
+    callObject.on("camera-error", e => {
+      logDailyEvent(e);
+      dispatch({
+        type: CAM_OR_MIC_ERROR,
+        message: (e && e.errorMsg && e.errorMsg.errorMsg) || "Unknown"
+      });
+    });
   }, [callObject]);
 
   /**
@@ -87,10 +107,12 @@ function Call(props) {
   }
 
   const [largeTiles, smallTiles] = getTiles();
-  const message = getUIMessage(callState);
+  const message = getMessageLines(callState);
   return (
     <div className="call">
-      {message && <CallMessage message={message} />}
+      {message && (
+        <CallMessage header={message.header} detail={message.detail} />
+      )}
       <div className="large-tiles">
         {!message
           ? largeTiles

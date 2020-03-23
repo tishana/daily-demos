@@ -16,7 +16,8 @@ const initialCallState = {
       videoTrack: null
     }
   },
-  clickAllowTimeoutFired: false
+  clickAllowTimeoutFired: false,
+  camOrMicError: null
 };
 
 // --- Actions ---
@@ -34,6 +35,13 @@ const CLICK_ALLOW_TIMEOUT = "CLICK_ALLOW_TIMEOUT";
  */
 const PARTICIPANTS_CHANGE = "PARTICIPANTS_CHANGE";
 
+/**
+ * CAM_OR_MIC_ERROR action structure:
+ * - type: string
+ * - message: string
+ */
+const CAM_OR_MIC_ERROR = "ERROR";
+
 // --- Reducer and helpers --
 
 function callReducer(callState, action) {
@@ -49,6 +57,8 @@ function callReducer(callState, action) {
         ...callState,
         callItems
       };
+    case CAM_OR_MIC_ERROR:
+      return { ...callState, camOrMicError: action.message };
     default:
       throw new Error();
   }
@@ -97,29 +107,35 @@ function containsScreenShare(callItems) {
   return Object.keys(callItems).some(id => isScreenShare(id));
 }
 
-function getUIMessage(callState) {
+function getMessageLines(callState) {
   function shouldShowClickAllow() {
     const localCallItem = getLocalCallItem(callState.callItems);
     const hasLoaded = localCallItem && !localCallItem.isLoading;
     return !hasLoaded && callState.clickAllowTimeoutFired;
   }
 
-  let message = "";
-  if (shouldShowClickAllow()) {
-    message = 'Click "Allow" to enable camera and mic access';
+  let header = null;
+  let detail = null;
+  if (callState.camOrMicError) {
+    header = `Camera or mic access error: ${callState.camOrMicError}`;
+    detail =
+      "See https://help.daily.co/en/articles/2528184-unblock-camera-mic-access-on-a-computer to troubleshoot.";
+  } else if (shouldShowClickAllow()) {
+    header = 'Click "Allow" to enable camera and mic access';
   } else if (Object.keys(callState.callItems).length === 1) {
-    message = "Copy and share this page's URL to invite others";
+    header = "Copy and share this page's URL to invite others";
   }
-  return message;
+  return header || detail ? { header, detail } : null;
 }
 
 export {
   initialCallState,
   CLICK_ALLOW_TIMEOUT,
   PARTICIPANTS_CHANGE,
+  CAM_OR_MIC_ERROR,
   callReducer,
   isLocal,
   isScreenShare,
   containsScreenShare,
-  getUIMessage
+  getMessageLines
 };

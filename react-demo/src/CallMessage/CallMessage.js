@@ -3,10 +3,16 @@ import "./CallMessage.css";
 
 /**
  * Props:
- * - message
+ * - header: string
+ * - detail: string
  */
 function CallMessage(props) {
-  return <p className="call-message">{props.message}</p>;
+  return (
+    <div className="call-message">
+      <p className="call-message-header">{props.header}</p>
+      <p>{props.detail}</p>
+    </div>
+  );
 }
 
 export default CallMessage;

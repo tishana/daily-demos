@@ -3,8 +3,13 @@
   left: 50%;
   position: absolute;
   transform: translate(-50%, -50%);
+  width: 100%;
   color: #ffffff;
   text-align: center;
   font-size: 14px;
   line-height: 17px;
+}
+
+.call-message-header {
+  font-weight: bold;
 }
