@@ -6,7 +6,7 @@ import TrayButton, {
   TYPE_SCREEN,
   TYPE_LEAVE
 } from "../TrayButton/TrayButton";
-import CallObjectContext from "../CallObjectContext";
+import CallObjectContext from "../../CallObjectContext";
 
 /**
  * Gets [isCameraMuted, isMicMuted, isSharingScreen].

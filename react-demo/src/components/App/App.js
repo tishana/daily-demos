@@ -8,10 +8,10 @@ import {
   CREATE_ROOM_FINISH,
   LEAVE_ROOM
 } from "./roomState";
-import api from "../api";
+import api from "../../api";
 import "./App.css";
 import Tray from "../Tray/Tray";
-import CallObjectContext from "../CallObjectContext";
+import CallObjectContext from "../../CallObjectContext";
 import { roomUrlFromPageUrl, pageUrlFromRoomUrl } from "./urlUtils";
 
 function App() {

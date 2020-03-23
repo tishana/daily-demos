@@ -1,7 +1,7 @@
 import React, { useEffect, useContext, useReducer } from "react";
 import "./Call.css";
 import Tile from "../Tile/Tile";
-import CallObjectContext from "../CallObjectContext";
+import CallObjectContext from "../../CallObjectContext";
 import CallMessage from "../CallMessage/CallMessage";
 import {
   initialCallState,
