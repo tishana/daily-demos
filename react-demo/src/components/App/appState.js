@@ -1,9 +1,9 @@
 import DailyIframe from "@daily-co/daily-js";
 
-const initialRoomState = {
-  isCreating: false,
-  url: null,
-  error: null,
+const initialAppState = {
+  isCreatingRoom: false,
+  roomUrl: null,
+  roomError: null,
   callObject: null
 };
 
@@ -38,7 +38,7 @@ const LEAVE_ROOM = "LEAVE_ROOM";
  * when the room changes) to illustrate proper cleanup if you wanted to free up
  * resources while not in a call.
  */
-function roomReducer(room, action) {
+function appReducer(room, action) {
   function cleanUpCallObject() {
     room.callObject && room.callObject.destroy();
   }
@@ -46,27 +46,32 @@ function roomReducer(room, action) {
   switch (action.type) {
     case CREATE_ROOM_START:
       cleanUpCallObject();
-      return { isCreating: true, url: null, error: null, callObject: null };
+      return {
+        isCreatingRoom: true,
+        roomUrl: null,
+        roomError: null,
+        callObject: null
+      };
     case CREATE_ROOM_FINISH:
       cleanUpCallObject();
       return {
-        isCreating: false,
-        url: action.url,
-        error: action.error,
+        isCreatingRoom: false,
+        roomUrl: action.url,
+        roomError: action.error,
         callObject: DailyIframe.createCallObject()
       };
     case LEAVE_ROOM:
       cleanUpCallObject();
-      return initialRoomState;
+      return initialAppState;
     default:
       throw new Error();
   }
 }
 
 export {
-  initialRoomState,
+  initialAppState,
   CREATE_ROOM_START,
   CREATE_ROOM_FINISH,
   LEAVE_ROOM,
-  roomReducer
+  appReducer
 };

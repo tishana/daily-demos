@@ -2,12 +2,12 @@ import React, { useReducer, useEffect } from "react";
 import Call from "../Call/Call";
 import StartButton from "../StartButton/StartButton";
 import {
-  roomReducer,
-  initialRoomState,
+  appReducer,
+  initialAppState,
   CREATE_ROOM_START,
   CREATE_ROOM_FINISH,
   LEAVE_ROOM
-} from "./roomState";
+} from "./appState";
 import api from "../../api";
 import "./App.css";
 import Tray from "../Tray/Tray";
@@ -15,7 +15,7 @@ import CallObjectContext from "../../CallObjectContext";
 import { roomUrlFromPageUrl, pageUrlFromRoomUrl } from "./urlUtils";
 
 function App() {
-  const [roomState, dispatch] = useReducer(roomReducer, initialRoomState);
+  const [appState, dispatch] = useReducer(appReducer, initialAppState);
 
   /**
    * Check if room already specified in page URL, when component mounts.
@@ -26,36 +26,36 @@ function App() {
   }, []);
 
   /**
-   * Update the page's URL to reflect the active call when roomState.url changes
+   * Update the page's URL to reflect the active call when appState.roomUrl changes
    */
   useEffect(() => {
-    const pageUrl = pageUrlFromRoomUrl(roomState.url);
+    const pageUrl = pageUrlFromRoomUrl(appState.roomUrl);
     if (pageUrl === window.location.href) return;
     window.history.pushState(null, null, pageUrl);
-  }, [roomState.url]);
+  }, [appState.roomUrl]);
 
   /**
-   * Start createRoom API call when roomState.isCreating is set
+   * Start createRoom API call when appState.isCreating is set
    */
   useEffect(() => {
-    if (!roomState.isCreating) return;
+    if (!appState.isCreatingRoom) return;
     api
       .createRoom()
       .then(room => dispatch({ type: CREATE_ROOM_FINISH, url: room.url }))
       .catch(error => dispatch({ type: CREATE_ROOM_FINISH, error }));
-  }, [roomState.isCreating]);
+  }, [appState.isCreatingRoom]);
 
   return (
-    <CallObjectContext.Provider value={roomState.callObject}>
+    <CallObjectContext.Provider value={appState.callObject}>
       <div className="app">
-        {roomState.url ? (
+        {appState.roomUrl ? (
           <>
-            <Call roomUrl={roomState.url} />
+            <Call roomUrl={appState.roomUrl} />
             <Tray onClickLeaveCall={() => dispatch({ type: LEAVE_ROOM })} />
           </>
         ) : (
           <StartButton
-            disabled={roomState.isCreating}
+            disabled={appState.isCreatingRoom}
             onClick={() => {
               dispatch({ type: CREATE_ROOM_START });
             }}
