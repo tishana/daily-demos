@@ -12,7 +12,7 @@ import api from "../../api";
 import "./App.css";
 import Tray from "../Tray/Tray";
 import CallObjectContext from "../../CallObjectContext";
-import { roomUrlFromPageUrl, pageUrlFromRoomUrl } from "./urlUtils";
+import { roomUrlFromPageUrl, pageUrlFromRoomUrl } from "../../urlUtils";
 
 function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
