@@ -1,7 +1,7 @@
 /**
  * Call state is comprised of:
  * - "Call items" (inputs to the call, i.e. participants or shared screens)
- * - UI state that depends on call items
+ * - UI state that depends on call items (for now, just whether to show "click allow" message)
  *
  * Call items are keyed by id:
  * - "local" for the current participant
@@ -55,12 +55,12 @@ function callReducer(callState, action) {
 }
 
 function getShowClickAllow(callItems) {
-  const hasLoaded =
-    localCallItem(callItems) && !localCallItem(callItems).isLoading;
+  const localCallItem = getLocalCallItem(callItems);
+  const hasLoaded = localCallItem && !localCallItem.isLoading;
   return !hasLoaded;
 }
 
-function localCallItem(callItems) {
+function getLocalCallItem(callItems) {
   return callItems["local"];
 }
 
