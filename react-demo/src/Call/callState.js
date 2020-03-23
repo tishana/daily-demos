@@ -46,8 +46,8 @@ function callReducer(callState, action) {
     case PARTICIPANTS_CHANGE:
       const callItems = getCallItems(action.participants, callState.callItems);
       return {
-        callItems,
-        showClickAllow: getShowClickAllow(callItems)
+        ...callState,
+        callItems
       };
     default:
       throw new Error();
