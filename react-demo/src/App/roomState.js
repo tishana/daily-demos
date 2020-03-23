@@ -23,6 +23,12 @@ const CREATE_ROOM_START = "CREATE_ROOM_START";
  */
 const CREATE_ROOM_FINISH = "CREATE_ROOM_FINISH";
 
+/**
+ * LEAVE_ROOM action structure:
+ * - type: string
+ */
+const LEAVE_ROOM = "LEAVE_ROOM";
+
 // --- Reducer ---
 
 /**
@@ -33,20 +39,34 @@ const CREATE_ROOM_FINISH = "CREATE_ROOM_FINISH";
  * resources while not in a call.
  */
 function roomReducer(room, action) {
+  function cleanUpCallObject() {
+    room.callObject && room.callObject.destroy();
+  }
+
   switch (action.type) {
     case CREATE_ROOM_START:
-      room.callObject && room.callObject.destroy();
+      cleanUpCallObject();
       return { isCreating: true, url: null, error: null, callObject: null };
     case CREATE_ROOM_FINISH:
+      cleanUpCallObject();
       return {
         isCreating: false,
         url: action.url,
         error: action.error,
         callObject: DailyIframe.createCallObject()
       };
+    case LEAVE_ROOM:
+      cleanUpCallObject();
+      return initialRoomState;
     default:
       throw new Error();
   }
 }
 
-export { initialRoomState, CREATE_ROOM_START, CREATE_ROOM_FINISH, roomReducer };
+export {
+  initialRoomState,
+  CREATE_ROOM_START,
+  CREATE_ROOM_FINISH,
+  LEAVE_ROOM,
+  roomReducer
+};

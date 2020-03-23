@@ -5,7 +5,8 @@ import {
   roomReducer,
   initialRoomState,
   CREATE_ROOM_START,
-  CREATE_ROOM_FINISH
+  CREATE_ROOM_FINISH,
+  LEAVE_ROOM
 } from "./roomState";
 import api from "../api";
 import "./App.css";
@@ -28,8 +29,9 @@ function App() {
    * Update the page's URL to reflect the active call when roomState.url changes
    */
   useEffect(() => {
-    if (!roomState.url) return;
-    window.history.pushState(null, null, pageUrlFromRoomUrl(roomState.url));
+    const pageUrl = pageUrlFromRoomUrl(roomState.url);
+    if (pageUrl === window.location.href) return;
+    window.history.pushState(null, null, pageUrl);
   }, [roomState.url]);
 
   /**
@@ -49,7 +51,7 @@ function App() {
         {roomState.url ? (
           <>
             <Call roomUrl={roomState.url} />
-            <Tray />
+            <Tray onClickLeaveCall={() => dispatch({ type: LEAVE_ROOM })} />
           </>
         ) : (
           <StartButton

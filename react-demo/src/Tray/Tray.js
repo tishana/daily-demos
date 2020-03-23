@@ -30,7 +30,11 @@ function getStreamStates(callObject) {
   return [isCameraMuted, isMicMuted, isSharingScreen];
 }
 
-function Tray() {
+/**
+ * Props:
+ * - onClickLeaveCall
+ */
+function Tray(props) {
   const callObject = useContext(CallObjectContext);
   const [isCameraMuted, setCameraMuted] = useState(false);
   const [isMicMuted, setMicMuted] = useState(false);
@@ -50,8 +54,8 @@ function Tray() {
       : callObject.startScreenShare();
   }
 
-  function leaveCall(params) {
-    window.location.href = window.location.href.split("?")[0];
+  function leaveCall() {
+    props.onClickLeaveCall && props.onClickLeaveCall();
   }
 
   /**
