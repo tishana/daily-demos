@@ -17,7 +17,8 @@ const initialCallState = {
     }
   },
   clickAllowTimeoutFired: false,
-  camOrMicError: null
+  camOrMicError: null,
+  fatalError: null
 };
 
 // --- Actions ---
@@ -40,7 +41,14 @@ const PARTICIPANTS_CHANGE = "PARTICIPANTS_CHANGE";
  * - type: string
  * - message: string
  */
-const CAM_OR_MIC_ERROR = "ERROR";
+const CAM_OR_MIC_ERROR = "CAM_OR_MIC_ERROR";
+
+/**
+ * CAM_OR_MIC_ERROR action structure:
+ * - type: string
+ * - message: string
+ */
+const FATAL_ERROR = "FATAL_ERROR";
 
 // --- Reducer and helpers --
 
@@ -59,6 +67,8 @@ function callReducer(callState, action) {
       };
     case CAM_OR_MIC_ERROR:
       return { ...callState, camOrMicError: action.message };
+    case FATAL_ERROR:
+      return { ...callState, fatalError: action.message };
     default:
       throw new Error();
   }
@@ -107,7 +117,7 @@ function containsScreenShare(callItems) {
   return Object.keys(callItems).some(id => isScreenShare(id));
 }
 
-function getMessageLines(callState) {
+function getMessage(callState) {
   function shouldShowClickAllow() {
     const localCallItem = getLocalCallItem(callState.callItems);
     const hasLoaded = localCallItem && !localCallItem.isLoading;
@@ -116,16 +126,21 @@ function getMessageLines(callState) {
 
   let header = null;
   let detail = null;
-  if (callState.camOrMicError) {
+  let isError = false;
+  if (callState.fatalError) {
+    header = `Fatal error: ${callState.fatalError}`;
+    isError = true;
+  } else if (callState.camOrMicError) {
     header = `Camera or mic access error: ${callState.camOrMicError}`;
     detail =
       "See https://help.daily.co/en/articles/2528184-unblock-camera-mic-access-on-a-computer to troubleshoot.";
+    isError = true;
   } else if (shouldShowClickAllow()) {
     header = 'Click "Allow" to enable camera and mic access';
   } else if (Object.keys(callState.callItems).length === 1) {
     header = "Copy and share this page's URL to invite others";
   }
-  return header || detail ? { header, detail } : null;
+  return header || detail ? { header, detail, isError } : null;
 }
 
 export {
@@ -133,9 +148,10 @@ export {
   CLICK_ALLOW_TIMEOUT,
   PARTICIPANTS_CHANGE,
   CAM_OR_MIC_ERROR,
+  FATAL_ERROR,
   callReducer,
   isLocal,
   isScreenShare,
   containsScreenShare,
-  getMessageLines
+  getMessage
 };

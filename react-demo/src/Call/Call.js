@@ -8,11 +8,12 @@ import {
   CLICK_ALLOW_TIMEOUT,
   PARTICIPANTS_CHANGE,
   CAM_OR_MIC_ERROR,
+  FATAL_ERROR,
   callReducer,
   isLocal,
   isScreenShare,
   containsScreenShare,
-  getMessageLines
+  getMessage
 } from "./callState";
 
 function logDailyEvent(e) {
@@ -64,6 +65,21 @@ function Call(props) {
   }, [callObject]);
 
   /**
+   * Start listening for fatal errors, when the callObject is set.
+   */
+  useEffect(() => {
+    if (!callObject) return;
+
+    callObject.on("error", e => {
+      logDailyEvent(e);
+      dispatch({
+        type: FATAL_ERROR,
+        message: (e && e.errorMsg) || "Unknown"
+      });
+    });
+  }, [callObject]);
+
+  /**
    * Join the call when the roomUrl and callObject are set.
    */
   useEffect(() => {
@@ -107,11 +123,15 @@ function Call(props) {
   }
 
   const [largeTiles, smallTiles] = getTiles();
-  const message = getMessageLines(callState);
+  const message = getMessage(callState);
   return (
     <div className="call">
       {message && (
-        <CallMessage header={message.header} detail={message.detail} />
+        <CallMessage
+          header={message.header}
+          detail={message.detail}
+          isError={message.isError}
+        />
       )}
       <div className="large-tiles">
         {!message
