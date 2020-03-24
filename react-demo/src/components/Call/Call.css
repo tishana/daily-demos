@@ -5,14 +5,13 @@
 
 .large-tiles {
   height: calc(100% - 132.5px);
-  width: 75%;
+  width: 80%;
   position: relative;
   left: 50%;
   transform: translate(-50%, 0);
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
   align-items: center;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
   overflow-y: scroll;
 }
 

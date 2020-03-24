@@ -5,8 +5,8 @@
 }
 
 .tile.large {
-  flex: 1 1 30%;
   position: relative;
+  margin: 2px;
 }
 
 .tile video {
