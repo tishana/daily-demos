@@ -1,4 +1,4 @@
-import React, { useReducer, useEffect } from "react";
+import React, { useReducer, useEffect, useCallback } from "react";
 import Call from "../Call/Call";
 import StartButton from "../StartButton/StartButton";
 import {
@@ -18,7 +18,7 @@ function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
 
   /**
-   * Check if room already specified in page URL, when component mounts.
+   * Check if room already specified in page URL when component mounts, and use it
    */
   useEffect(() => {
     const roomUrl = roomUrlFromPageUrl();
@@ -34,11 +34,9 @@ function App() {
     window.history.pushState(null, null, pageUrl);
   }, [appState.roomUrl]);
 
-  /**
-   * Start createRoom API call when appState.isCreating is set
-   */
-  useEffect(() => {
-    if (!appState.isCreatingRoom) return;
+  const createRoom = useCallback(() => {
+    if (appState.isCreatingRoom) return;
+    dispatch({ type: CREATE_ROOM_START });
     api
       .createRoom()
       .then(room => dispatch({ type: CREATE_ROOM_FINISH, url: room.url }))
@@ -64,9 +62,7 @@ function App() {
         ) : (
           <StartButton
             disabled={appState.isCreatingRoom}
-            onClick={() => {
-              dispatch({ type: CREATE_ROOM_START });
-            }}
+            onClick={createRoom}
           />
         )}
       </div>
