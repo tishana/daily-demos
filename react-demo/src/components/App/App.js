@@ -51,6 +51,13 @@ function App() {
       console.log("Error creating room", appState.roomError);
   }, [appState.roomError]);
 
+  /**
+   * Uncomment to attach call object to window for debugging purposes
+   */
+  // useEffect(() => {
+  //   appState.callObject && (window.callObject = appState.callObject);
+  // }, [appState.callObject]);
+
   return (
     <CallObjectContext.Provider value={appState.callObject}>
       <div className="app">
