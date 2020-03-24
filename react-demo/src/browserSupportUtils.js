@@ -20,6 +20,13 @@ function getChromeVersion() {
   return { major, minor, build, patch, opera };
 }
 
+/**
+ * Screen sharing only really works on Chrome. Trying to invoke
+ * `startScreenShare()` on other browsers can result in unexpected behavior.
+ *
+ * This isn't ideal. In a future release, daily-js will more gracefully
+ * handle browser support so you don't have to hard-code checks like this.
+ */
 export function browserSupportsScreenShare() {
   if (
     navigator.userAgent.match(/Chrome\//) &&
