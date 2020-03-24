@@ -45,6 +45,14 @@ function App() {
       .catch(error => dispatch({ type: CREATE_ROOM_FINISH, error }));
   }, [appState.isCreatingRoom]);
 
+  /**
+   * Log an error if room creation fails
+   */
+  useEffect(() => {
+    appState.roomError &&
+      console.log("Error creating room", appState.roomError);
+  }, [appState.roomError]);
+
   return (
     <CallObjectContext.Provider value={appState.callObject}>
       <div className="app">
