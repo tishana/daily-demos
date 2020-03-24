@@ -32,7 +32,7 @@ function getStreamStates(callObject) {
 
 /**
  * Props:
- * - onClickLeaveCall
+ * - onClickLeaveCall: () => ()
  */
 function Tray(props) {
   const callObject = useContext(CallObjectContext);

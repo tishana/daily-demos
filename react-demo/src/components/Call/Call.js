@@ -22,7 +22,7 @@ function logDailyEvent(e) {
 
 /**
  * Props
- * - roomUrl: String
+ * - roomUrl: string
  */
 function Call(props) {
   const callObject = useContext(CallObjectContext);

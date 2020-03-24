@@ -3,8 +3,8 @@ import "./StartButton.css";
 
 /**
  * Props:
- * - disabled
- * - onClick
+ * - disabled: boolean
+ * - onClick: () => ()
  */
 function StartButton(props) {
   return (

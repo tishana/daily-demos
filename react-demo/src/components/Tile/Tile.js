@@ -5,9 +5,9 @@ import "./Tile.css";
  * Props
  * - videoTrack: MediaStreamTrack?
  * - audioTrack: MediaStreamTrack?
- * - isLocalPerson: Boolean
- * - isLarge: Boolean
- * - isLoading: Boolean
+ * - isLocalPerson: boolean
+ * - isLarge: boolean
+ * - isLoading: boolean
  */
 function Tile(props) {
   const videoEl = useRef(null);

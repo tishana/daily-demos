@@ -11,14 +11,14 @@ const initialAppState = {
 
 /**
  * CREATE_ROOM_START action structure:
- * - type: String
+ * - type: string
  */
 const CREATE_ROOM_START = "CREATE_ROOM_START";
 
 /**
  * CREATE_ROOM_FINISH action structure:
- * - type: String
- * - url: String?
+ * - type: string
+ * - url: string?
  * - error: Error?
  */
 const CREATE_ROOM_FINISH = "CREATE_ROOM_FINISH";

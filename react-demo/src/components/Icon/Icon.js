@@ -7,8 +7,8 @@ const TYPE_LEAVE = "leave";
 
 /**
  * Props:
- * - type
- * - highlighted
+ * - type: string
+ * - highlighted: boolean
  */
 function Icon(props) {
   function getFillColor() {

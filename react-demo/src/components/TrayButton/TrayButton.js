@@ -9,10 +9,10 @@ import Icon, {
 
 /**
  * Props:
- * - type
- * - highlighted
- * - onClick
- * - newButtonGroup
+ * - type: string
+ * - highlighted: boolean
+ * - onClick: () => ()
+ * - newButtonGroup: boolean
  */
 function TrayButton(props) {
   return (

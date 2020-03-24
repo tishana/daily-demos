@@ -25,13 +25,13 @@ const initialCallState = {
 
 /**
  * CLICK_ALLOW_TIMEOUT action structure:
- * - type: String
+ * - type: string
  */
 const CLICK_ALLOW_TIMEOUT = "CLICK_ALLOW_TIMEOUT";
 
 /**
  * PARTICIPANTS_CHANGE action structure:
- * - type: String
+ * - type: string
  * - participants: Object (from Daily.co callObject.participants())
  */
 const PARTICIPANTS_CHANGE = "PARTICIPANTS_CHANGE";
