@@ -7,6 +7,7 @@ import TrayButton, {
   TYPE_LEAVE
 } from "../TrayButton/TrayButton";
 import CallObjectContext from "../../CallObjectContext";
+import { browserSupportsScreenShare } from "../../browserSupportUtils";
 
 /**
  * Gets [isCameraMuted, isMicMuted, isSharingScreen].
@@ -98,11 +99,13 @@ function Tray(props) {
         highlighted={isMicMuted}
         onClick={toggleMic}
       />
-      <TrayButton
-        type={TYPE_SCREEN}
-        highlighted={isSharingScreen}
-        onClick={toggleSharingScreen}
-      />
+      {browserSupportsScreenShare() && (
+        <TrayButton
+          type={TYPE_SCREEN}
+          highlighted={isSharingScreen}
+          onClick={toggleSharingScreen}
+        />
+      )}
       <TrayButton
         type={TYPE_LEAVE}
         newButtonGroup={true}
