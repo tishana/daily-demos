@@ -24,7 +24,7 @@ function logDailyEvent(e) {
  * Props
  * - roomUrl: string
  */
-function Call(props) {
+export default function Call(props) {
   const callObject = useContext(CallObjectContext);
   const [callState, dispatch] = useReducer(callReducer, initialCallState);
 
@@ -142,5 +142,3 @@ function Call(props) {
     </div>
   );
 }
-
-export default Call;

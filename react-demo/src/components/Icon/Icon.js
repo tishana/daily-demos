@@ -10,7 +10,7 @@ const TYPE_LEAVE = "leave";
  * - type: string
  * - highlighted: boolean
  */
-function Icon(props) {
+export default function Icon(props) {
   function getFillColor() {
     return props.highlighted ? "#fb5554" : "#000000";
   }
@@ -102,7 +102,5 @@ function Icon(props) {
     </svg>
   );
 }
-
-export default Icon;
 
 export { TYPE_MUTE_CAMERA, TYPE_MUTE_MIC, TYPE_SCREEN, TYPE_LEAVE };

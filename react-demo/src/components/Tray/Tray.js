@@ -35,7 +35,7 @@ function getStreamStates(callObject) {
  * Props:
  * - onClickLeaveCall: () => ()
  */
-function Tray(props) {
+export default function Tray(props) {
   const callObject = useContext(CallObjectContext);
   const [isCameraMuted, setCameraMuted] = useState(false);
   const [isMicMuted, setMicMuted] = useState(false);
@@ -115,5 +115,3 @@ function Tray(props) {
     </div>
   );
 }
-
-export default Tray;

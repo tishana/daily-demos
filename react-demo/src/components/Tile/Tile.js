@@ -9,7 +9,7 @@ import "./Tile.css";
  * - isLarge: boolean
  * - isLoading: boolean
  */
-function Tile(props) {
+export default function Tile(props) {
   const videoEl = useRef(null);
   const audioEl = useRef(null);
 
@@ -62,5 +62,3 @@ function Tile(props) {
     </div>
   );
 }
-
-export default Tile;

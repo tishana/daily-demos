@@ -14,7 +14,7 @@ import Icon, {
  * - onClick: () => ()
  * - newButtonGroup: boolean
  */
-function TrayButton(props) {
+export default function TrayButton(props) {
   return (
     <button
       onClick={props.onClick}
@@ -24,7 +24,5 @@ function TrayButton(props) {
     </button>
   );
 }
-
-export default TrayButton;
 
 export { TYPE_MUTE_CAMERA, TYPE_MUTE_MIC, TYPE_SCREEN, TYPE_LEAVE };

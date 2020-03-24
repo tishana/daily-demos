@@ -6,7 +6,7 @@ import "./StartButton.css";
  * - disabled: boolean
  * - onClick: () => ()
  */
-function StartButton(props) {
+export default function StartButton(props) {
   return (
     <button
       className="start-button"
@@ -17,5 +17,3 @@ function StartButton(props) {
     </button>
   );
 }
-
-export default StartButton;

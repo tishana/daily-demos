@@ -14,7 +14,7 @@ import Tray from "../Tray/Tray";
 import CallObjectContext from "../../CallObjectContext";
 import { roomUrlFromPageUrl, pageUrlFromRoomUrl } from "../../urlUtils";
 
-function App() {
+export default function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
 
   /**
@@ -76,5 +76,3 @@ function App() {
     </CallObjectContext.Provider>
   );
 }
-
-export default App;

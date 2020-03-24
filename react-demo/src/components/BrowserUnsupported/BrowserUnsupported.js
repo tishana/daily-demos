@@ -1,7 +1,7 @@
 import React from "react";
 import "./BrowserUnsupported.css";
 
-function BrowserUnsupported() {
+export default function BrowserUnsupported() {
   return (
     <p class="browser-unsupported">
       Looks like you need to upgrade your browser to make Daily.co video calls.
@@ -14,5 +14,3 @@ function BrowserUnsupported() {
     </p>
   );
 }
-
-export default BrowserUnsupported;
