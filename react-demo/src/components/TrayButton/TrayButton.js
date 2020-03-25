@@ -10,6 +10,7 @@ import Icon, {
 /**
  * Props:
  * - type: string
+ * - disabled: boolean
  * - highlighted: boolean
  * - onClick: () => ()
  * - newButtonGroup: boolean
@@ -17,6 +18,7 @@ import Icon, {
 export default function TrayButton(props) {
   return (
     <button
+      disabled={props.disabled}
       onClick={props.onClick}
       className={"tray-button" + (props.newButtonGroup ? " new-group" : "")}
     >

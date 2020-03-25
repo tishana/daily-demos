@@ -15,85 +15,111 @@ import {
   containsScreenShare,
   getMessage
 } from "./callState";
+import { logDailyEvent } from "../../logUtils";
 
-function logDailyEvent(e) {
-  console.log("[daily.co event]", e.action);
-}
-
-/**
- * Props
- * - roomUrl: string
- */
-export default function Call(props) {
+export default function Call() {
   const callObject = useContext(CallObjectContext);
   const [callState, dispatch] = useReducer(callReducer, initialCallState);
 
   /**
-   * Start listening for participant changes, when the roomUrl and callObject are set.
+   * Start listening for participant changes, when the callObject is set.
+   *
+   * NOTE: typically you'd specify an effect cleanup function (like the one
+   * commented out below), but since it'd fire while callObject.destroy() is
+   * occurring, it'd trigger an error (and callObject.destroy() cleans up
+   * event listeners).
    */
   useEffect(() => {
     if (!callObject) return;
 
-    for (const event of [
+    const events = [
       "participant-joined",
       "participant-updated",
       "participant-left"
-    ]) {
-      callObject.on(event, e => {
-        logDailyEvent(e);
-        dispatch({
-          type: PARTICIPANTS_CHANGE,
-          participants: callObject.participants()
-        });
+    ];
+
+    function handleParticipantChangeEvent(e) {
+      logDailyEvent(e);
+      dispatch({
+        type: PARTICIPANTS_CHANGE,
+        participants: callObject.participants()
       });
     }
+
+    for (const event of events) {
+      callObject.on(event, handleParticipantChangeEvent);
+    }
+
+    // return function cleanup() {
+    // for (const event of events) {
+    //   callObject && callObject.off(event, handleParticipantChangeEvent);
+    // }
+    // };
   }, [callObject]);
 
   /**
    * Start listening for call errors, when the callObject is set.
+   *
+   * NOTE: typically you'd specify an effect cleanup function (like the one
+   * commented out below), but since it'd fire while callObject.destroy() is
+   * occurring, it'd trigger an error (and callObject.destroy() cleans up
+   * event listeners).
    */
   useEffect(() => {
     if (!callObject) return;
 
-    callObject.on("camera-error", e => {
+    function handleCameraErrorEvent(e) {
       logDailyEvent(e);
       dispatch({
         type: CAM_OR_MIC_ERROR,
         message: (e && e.errorMsg && e.errorMsg.errorMsg) || "Unknown"
       });
-    });
+    }
+
+    callObject.on("camera-error", handleCameraErrorEvent);
+
+    // return function cleanup() {
+    // callObject.off("camera-error", handleCameraErrorEvent);
+    // };
   }, [callObject]);
 
   /**
    * Start listening for fatal errors, when the callObject is set.
+   *
+   * NOTE: typically you'd specify an effect cleanup function (like the one
+   * commented out below), but since it'd fire while callObject.destroy() is
+   * occurring, it'd trigger an error (and callObject.destroy() cleans up
+   * event listeners).
    */
   useEffect(() => {
     if (!callObject) return;
 
-    callObject.on("error", e => {
+    function handleErrorEvent(e) {
       logDailyEvent(e);
       dispatch({
         type: FATAL_ERROR,
         message: (e && e.errorMsg) || "Unknown"
       });
-    });
-  }, [callObject]);
+    }
 
-  /**
-   * Join the call when the roomUrl and callObject are set.
-   */
-  useEffect(() => {
-    if (!(props.roomUrl && callObject)) return;
-    callObject.join({ url: props.roomUrl });
-  }, [callObject, props.roomUrl]);
+    callObject.on("error", handleErrorEvent);
+
+    // return function cleanup() {
+    // callObject.off(handleErrorEvent);
+    // };
+  }, [callObject]);
 
   /**
    * Start a timer to show the "click allow" message, when the component mounts.
    */
   useEffect(() => {
-    setTimeout(() => {
+    const t = setTimeout(() => {
       dispatch({ type: CLICK_ALLOW_TIMEOUT });
     }, 2500);
+
+    return function cleanup() {
+      clearTimeout(t);
+    };
   }, []);
 
   function getTiles() {
