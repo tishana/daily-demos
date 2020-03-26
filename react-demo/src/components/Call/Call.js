@@ -23,11 +23,6 @@ export default function Call() {
 
   /**
    * Start listening for participant changes, when the callObject is set.
-   *
-   * NOTE: typically you'd specify an effect cleanup function (like the one
-   * commented out below), but since it'd fire while callObject.destroy() is
-   * occurring, it'd trigger an error (and callObject.destroy() cleans up
-   * event listeners).
    */
   useEffect(() => {
     if (!callObject) return;
@@ -50,20 +45,15 @@ export default function Call() {
       callObject.on(event, handleParticipantChangeEvent);
     }
 
-    // return function cleanup() {
-    // for (const event of events) {
-    //   callObject && callObject.off(event, handleParticipantChangeEvent);
-    // }
-    // };
+    return function cleanup() {
+      for (const event of events) {
+        callObject && callObject.off(event, handleParticipantChangeEvent);
+      }
+    };
   }, [callObject]);
 
   /**
    * Start listening for call errors, when the callObject is set.
-   *
-   * NOTE: typically you'd specify an effect cleanup function (like the one
-   * commented out below), but since it'd fire while callObject.destroy() is
-   * occurring, it'd trigger an error (and callObject.destroy() cleans up
-   * event listeners).
    */
   useEffect(() => {
     if (!callObject) return;
@@ -78,18 +68,13 @@ export default function Call() {
 
     callObject.on("camera-error", handleCameraErrorEvent);
 
-    // return function cleanup() {
-    // callObject.off("camera-error", handleCameraErrorEvent);
-    // };
+    return function cleanup() {
+      callObject.off("camera-error", handleCameraErrorEvent);
+    };
   }, [callObject]);
 
   /**
    * Start listening for fatal errors, when the callObject is set.
-   *
-   * NOTE: typically you'd specify an effect cleanup function (like the one
-   * commented out below), but since it'd fire while callObject.destroy() is
-   * occurring, it'd trigger an error (and callObject.destroy() cleans up
-   * event listeners).
    */
   useEffect(() => {
     if (!callObject) return;
@@ -104,9 +89,9 @@ export default function Call() {
 
     callObject.on("error", handleErrorEvent);
 
-    // return function cleanup() {
-    // callObject.off(handleErrorEvent);
-    // };
+    return function cleanup() {
+      callObject.off("error", handleErrorEvent);
+    };
   }, [callObject]);
 
   /**

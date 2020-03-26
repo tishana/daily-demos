@@ -84,18 +84,13 @@ export default function App() {
 
   /**
    * Update app state based on reported meeting state changes.
-   *
-   * NOTE: typically you'd specify an effect cleanup function (like the one
-   * commented out below), but since it'd fire while callObject.destroy() is
-   * occurring, it'd trigger an error (and callObject.destroy() cleans up
-   * event listeners).
    */
   useEffect(() => {
     if (!callObject) return;
 
     const events = ["joined-meeting", "left-meeting", "error"];
 
-    function handleMeetingStateChange(e) {
+    function handleMeetingStateChangeEvent(e) {
       logDailyEvent(e);
       switch (callObject.meetingState()) {
         case "joined-meeting":
@@ -113,14 +108,14 @@ export default function App() {
     }
 
     for (const event of events) {
-      callObject.on(event, handleMeetingStateChange);
+      callObject.on(event, handleMeetingStateChangeEvent);
     }
 
-    // return function cleanup() {
-    // for (const event of events) {
-    // callObject.off(event, handleMeetingStateChange);
-    // }
-    // };
+    return function cleanup() {
+      for (const event of events) {
+        callObject.off(event, handleMeetingStateChangeEvent);
+      }
+    };
   }, [callObject, leaveCall]);
 
   /**
