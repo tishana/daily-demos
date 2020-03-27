@@ -13,44 +13,47 @@ const STATE_IDLE = "STATE_IDLE";
 const STATE_CREATING = "STATE_CREATING";
 const STATE_JOINING = "STATE_JOINING";
 const STATE_JOINED = "STATE_JOINED";
+const STATE_LEAVING = "STATE_LEAVING";
 const STATE_ERROR = "STATE_ERROR";
-const STATE_TEARING_DOWN = "STATE_TEARING_DOWN";
 
 export default function App() {
   const [appState, setAppState] = useState(STATE_IDLE);
   const [roomUrl, setRoomUrl] = useState(null);
   const [callObject, setCallObject] = useState(null);
 
-  const joinCall = useCallback(url => {
-    const callObject = DailyIframe.createCallObject();
-    callObject.join({ url });
-    setRoomUrl(url);
-    setCallObject(callObject);
-    setAppState(STATE_JOINING);
-  }, []);
-
-  const startCall = useCallback(() => {
+  /**
+   * Creates a new call room.
+   */
+  const createCall = useCallback(() => {
     setAppState(STATE_CREATING);
-    api
+    return api
       .createRoom()
-      .then(room => {
-        joinCall(room.url);
-      })
+      .then(room => room.url)
       .catch(error => {
         console.log("Error creating room", error);
         setRoomUrl(null);
         setAppState(STATE_IDLE);
       });
-  }, [joinCall]);
+  }, []);
 
-  const leaveCall = useCallback(() => {
-    setAppState(STATE_TEARING_DOWN);
-    callObject &&
-      callObject.destroy().then(() => {
-        setRoomUrl(null);
-        setCallObject(null);
-        setAppState(STATE_IDLE);
-      });
+  /**
+   * Starts joining an existing call.
+   */
+  const startJoiningCall = useCallback(url => {
+    const callObject = DailyIframe.createCallObject();
+    setRoomUrl(url);
+    setCallObject(callObject);
+    setAppState(STATE_JOINING);
+    callObject.join({ url });
+  }, []);
+
+  /**
+   * Starts leaving the current call.
+   */
+  const startLeavingCall = useCallback(() => {
+    if (!callObject) return;
+    setAppState(STATE_LEAVING);
+    callObject.leave();
   }, [callObject]);
 
   /**
@@ -59,8 +62,8 @@ export default function App() {
    */
   useEffect(() => {
     const url = roomUrlFromPageUrl();
-    url && joinCall(url);
-  }, [joinCall]);
+    url && startJoiningCall(url);
+  }, [startJoiningCall]);
 
   /**
    * Update the page's URL to reflect the active call when roomUrl changes.
@@ -84,6 +87,11 @@ export default function App() {
 
   /**
    * Update app state based on reported meeting state changes.
+   *
+   * NOTE: Here we're showing how to completely clean up a call with destroy().
+   * This isn't strictly necessary between join()s, but is good practice when
+   * you know you'll be done with the call object for a while and you're no
+   * longer listening to its events.
    */
   useEffect(() => {
     if (!callObject) return;
@@ -97,10 +105,14 @@ export default function App() {
           setAppState(STATE_JOINED);
           break;
         case "left-meeting":
-          leaveCall();
+          callObject.destroy().then(() => {
+            setRoomUrl(null);
+            setCallObject(null);
+            setAppState(STATE_IDLE);
+          });
           break;
         case "error":
-          setAppState(STATE_ERROR);
+          setAppState(STATE_ERROR); // TODO: test again
           break;
         default:
           break;
@@ -116,7 +128,7 @@ export default function App() {
         callObject.off(event, handleMeetingStateChangeEvent);
       }
     };
-  }, [callObject, leaveCall]);
+  }, [callObject]);
 
   /**
    * Show the call UI if we're either joining, already joined, or are showing
@@ -156,10 +168,18 @@ export default function App() {
       {showCall ? (
         <CallObjectContext.Provider value={callObject}>
           <Call roomUrl={roomUrl} />
-          <Tray disabled={!enableCallButtons} onClickLeaveCall={leaveCall} />
+          <Tray
+            disabled={!enableCallButtons}
+            onClickLeaveCall={startLeavingCall}
+          />
         </CallObjectContext.Provider>
       ) : (
-        <StartButton disabled={!enableStartButton} onClick={startCall} />
+        <StartButton
+          disabled={!enableStartButton}
+          onClick={() => {
+            createCall().then(url => startJoiningCall(url));
+          }}
+        />
       )}
     </div>
   );
