@@ -112,7 +112,7 @@ export default function App() {
           });
           break;
         case "error":
-          setAppState(STATE_ERROR); // TODO: test again
+          setAppState(STATE_ERROR);
           break;
         default:
           break;
